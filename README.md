@@ -8,8 +8,6 @@ package system on Void Linux. Inspired by [lazygit](https://github.com/jesseduff
 it provides a keyboard-driven interface for managing packages without needing to
 memorize flags or commands.
 
----
-
 ## Table of Contents
 - [Quick Start](#quick-start)
 - [Features](#features)
@@ -17,8 +15,6 @@ memorize flags or commands.
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
-
----
 
 ## Quick Start
 
@@ -30,8 +26,6 @@ memorize flags or commands.
 lazypm
 ```
 
----
-
 ## Features
 
 - Browse, search, install, remove, and upgrade packages
@@ -42,8 +36,6 @@ lazypm
 *(Coming soon!)*  
 [GIF or screenshot of the interface]
 
----
-
 ## Installation
 
 ```sh
@@ -53,8 +45,6 @@ gcc ./build/nob.c -o ./build/nob
 ./build/nob
 ```
 
----
-
 ## Usage
 
 ```sh
@@ -62,8 +52,6 @@ lazypm
 ```
 
 Navigate with arrow keys or hjkl. Press ? for help inside the UI.
-
----
 
 ## Contributing 
 
@@ -76,8 +64,6 @@ Encountered a defect? Please report it under [issues](https://github.com/navazjm
 Be sure to include detailed information to help us address the issue effectively.\
 \
 Want to implement a feature request or fix a defect? Checkout our [contributing guide](./docs/contributing.md).
-
----
 
 ## License
 
