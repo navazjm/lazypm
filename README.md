@@ -30,7 +30,7 @@ lazypm
 
 - Browse, search, install, remove, and upgrade packages
 - View detailed package info
-- TUI interface powered by [notcurses](https://github.com/dankamongmen/notcurses)
+- TUI interface powered by [termbox2](https://github.com/termbox/termbox2)
 - Minimal dependencies, fast startup
 
 *(Coming soon!)*  
@@ -39,7 +39,7 @@ lazypm
 ## Installation
 
 ```sh
-git clone --recurse-submodules https://github.com/navazjm/lazypm
+git clone https://github.com/navazjm/lazypm
 cd lazypm
 gcc ./build/nob.c -o ./build/nob
 ./build/nob
