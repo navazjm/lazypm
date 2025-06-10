@@ -7,6 +7,7 @@
 
 #include "packages.h"
 #include "common.h"
+#include "status.h"
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -51,6 +52,11 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *cmd)
     if (fp == NULL)
     {
         fprintf(stderr, "[ERROR] popen() failed for command: \"%s\"\nReason: %s\n", cmd, strerror(errno));
+
+        char *status_msg;
+        asprintf(&status_msg, "Failed to get packages: %s", cmd);
+        lpm_status_msg_set_error(status_msg);
+        LPM_FREE(status_msg);
         return LPM_ERROR;
     }
 
@@ -88,12 +94,22 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *cmd)
     {
         fprintf(stderr, "[ERROR] An error occurred while reading the output of: \"%s\"\nReason: %s\n", cmd,
                 strerror(errno));
+
+        char *status_msg;
+        asprintf(&status_msg, "Failed to get packages: %s", cmd);
+        lpm_status_msg_set_error(status_msg);
+        LPM_FREE(status_msg);
         result = LPM_ERROR;
     }
 
     if (pclose(fp) == -1)
     {
         fprintf(stderr, "[ERROR] Failed to close command stream: \"%s\"\nReason: %s\n", cmd, strerror(errno));
+
+        char *status_msg;
+        asprintf(&status_msg, "Failed to get packages: %s", cmd);
+        lpm_status_msg_set_error(status_msg);
+        LPM_FREE(status_msg);
         result = LPM_ERROR;
     }
 

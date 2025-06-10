@@ -6,7 +6,7 @@
 //
 // Roadmap:
 // - [x] 0.1.0 Display packages
-// - [ ] 0.2.0 status messages
+// - [x] 0.2.0 status messages
 // - [ ] 0.3.0 Filter
 // - [ ] 0.4.0 Install
 // - [ ] 0.5.0 Update
@@ -22,6 +22,7 @@
 
 #include "common.h"
 #include "layout.h"
+#include "status.h"
 #include "termbox2.h"
 
 // forward declarations
@@ -227,4 +228,6 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
 
     tb_printf(layout->footer_xpos, layout->footer_ypos, LPM_FG_COLOR, LPM_BG_COLOR, "Page %zu of %zu",
               layout->packages_page_index + 1, layout->packages_total_pages);
+
+    lpm_status_msg_display(layout->max_xpos, layout->footer_ypos);
 }
