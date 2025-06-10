@@ -55,14 +55,16 @@ Navigate with arrow keys or hjkl. Press ? for help inside the UI.
 
 ## Contributing 
 
-Want to contribute to lazypm? Awesome, we would love your input ♥\
-\
+Want to contribute to lazypm? Awesome, we would love your input ♥
+
+Before starting a new discussion or opening a new issue, please refer to our [release notes](./docs/release_notes.md). 
+
 If you have a feature request, start a [discussion](https://github.com/navazjm/lazypm/discussions),
-and we can work together to incorporate it into lazypm!\
-\
+and we can work together to incorporate it into lazypm!
+
 Encountered a defect? Please report it under [issues](https://github.com/navazjm/lazypm/issues).
-Be sure to include detailed information to help us address the issue effectively.\
-\
+Be sure to include detailed information to help us address the issue effectively.
+
 Want to implement a feature request or fix a defect? Checkout our [contributing guide](./docs/contributing.md).
 
 ## License

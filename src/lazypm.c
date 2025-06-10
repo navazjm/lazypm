@@ -4,19 +4,6 @@
 //
 // lazypm.c - Entry point into the lazypm tui application.
 //
-// Roadmap:
-// - [x] 0.1.0 Display packages
-// - [x] 0.2.0 status messages
-// - [ ] 0.3.0 Filter
-// - [ ] 0.4.0 Install
-// - [ ] 0.5.0 Update
-// - [ ] 0.6.0 Remove
-// - [ ] 0.7.0 Show depedencies
-//   - [ ] Modal to list depedencies
-// - [ ] 0.8.0 Show ? (keybindings)
-//   - [ ] Modal to list all keybindings
-// - [ ] 0.9.0 Error messages.
-//   - [ ] Log error messages to a file
 
 #define TB_IMPL
 
