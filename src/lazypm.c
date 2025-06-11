@@ -5,6 +5,8 @@
 // lazypm.c - Entry point into the lazypm tui application.
 //
 
+#include <stdio.h>
+#include <string.h>
 #define TB_IMPL
 
 #include "common.h"
@@ -127,32 +129,23 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
 {
     tb_clear();
 
+    // temp buffer to concatenate text together for displaying
+    char *temp = NULL;
+    size_t temp_len = 0;
+
     //
     // header
     //
 
-    const char *header = "  LAZYPM | (I)nstall | (R)emove | (D)ependencies | (U)pdate all | (F)ilter | ? help";
-    tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR_HIGHLIGHT, header);
-    for (int i = layout->min_xpos + strlen(header); i < layout->max_xpos; ++i)
-    {
-        // highlight remaining cells of the header row
-        tb_printf(i, layout->header_ypos, LPM_FG_COLOR, LPM_BG_COLOR_HIGHLIGHT, " ");
-    }
-
-    //
-    // filter
-    //
-
-    layout->filter_xpos = layout->min_xpos;
-    layout->filter_ypos = layout->header_ypos + 2;
-    tb_printf(layout->filter_xpos, layout->filter_ypos, LPM_FG_COLOR, LPM_BG_COLOR, "Filter: ");
-    layout->filter_xpos += strlen("Filter: ");
+    const char *header_text = " LAZYPM ";
+    tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR_HIGHLIGHT, header_text);
+    lpm_status_msg_display(layout->header_xpos + strlen(header_text) + 1, layout->header_ypos);
 
     //
     // packages
     //
 
-    layout->packages_ypos = layout->filter_ypos + 2;
+    layout->packages_ypos = layout->header_ypos + 2;
     uint8_t max_line_len = layout->max_xpos - layout->min_xpos;
     uint8_t longest_package_name_len = 0;
     layout->packages_render_capacity = layout->footer_ypos - layout->packages_ypos - 1;
@@ -179,33 +172,34 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
             break;
 
         size_t idx = layout->packages_page_index * layout->packages_render_capacity + i;
-        char *pkg_line;
-        asprintf(&pkg_line, "%s %-*s %s", pkgs->items[idx].status, longest_package_name_len, pkgs->items[idx].name,
+        asprintf(&temp, "%s %-*s %s", pkgs->items[idx].status, longest_package_name_len, pkgs->items[idx].name,
                  pkgs->items[idx].description);
 
-        uint8_t pkg_line_len = strlen(pkg_line);
-        if (pkg_line_len >= max_line_len)
+        temp_len = strlen(temp);
+        if (temp_len >= max_line_len)
         {
-            pkg_line[max_line_len - 3] = '.';
-            pkg_line[max_line_len - 2] = '.';
-            pkg_line[max_line_len - 1] = '.';
-            pkg_line[max_line_len] = '\0';
+            temp[max_line_len - 3] = '.';
+            temp[max_line_len - 2] = '.';
+            temp[max_line_len - 1] = '.';
+            temp[max_line_len] = '\0';
         }
 
         if (i == layout->packages_cursor_ypos)
         {
-            tb_printf(layout->packages_xpos, layout->packages_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR_HIGHLIGHT, pkg_line);
-            for (int j = layout->packages_xpos + pkg_line_len - 1; j < layout->max_xpos; ++j)
+            tb_printf(layout->packages_xpos, layout->packages_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR_HIGHLIGHT,
+                      temp);
+            for (int j = layout->packages_xpos + temp_len - 1; j < layout->max_xpos; ++j)
             {
-                // just like the header row, highlight remaining cells of the hovered package row
+                // highlight remaining cells of the hovered package row
                 tb_printf(j, layout->packages_ypos, LPM_FG_COLOR, LPM_BG_COLOR_HIGHLIGHT, " ");
             }
         }
         else
         {
-            tb_printf(layout->packages_xpos, layout->packages_ypos, LPM_FG_COLOR, LPM_BG_COLOR, pkg_line);
+            tb_printf(layout->packages_xpos, layout->packages_ypos, LPM_FG_COLOR, LPM_BG_COLOR, temp);
         }
-        LPM_FREE(pkg_line);
+        LPM_FREE(temp);
+        temp = NULL;
         layout->packages_ypos++;
     }
 
@@ -213,8 +207,65 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
     // footer
     //
 
-    tb_printf(layout->footer_xpos, layout->footer_ypos, LPM_FG_COLOR, LPM_BG_COLOR, "Page %zu of %zu",
-              layout->packages_page_index + 1, layout->packages_total_pages);
+    if (temp)
+        LPM_FREE(temp);
+    asprintf(&temp, "Page %zu of %zu (%zu) | ", layout->packages_page_index + 1, layout->packages_total_pages,
+             pkgs->count);
+    temp_len = strlen(temp);
 
-    lpm_status_msg_display(layout->max_xpos, layout->footer_ypos);
+    tb_printf(layout->footer_xpos, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, temp);
+    LPM_FREE(temp);
+    temp = NULL;
+
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/k");
+    temp_len += strlen("/k") - 1;
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "up ");
+    temp_len += strlen("up ") - 1;
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/j");
+    temp_len += strlen("/j") - 1;
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "down ");
+    temp_len += strlen("down ") - 1;
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/l");
+    temp_len += strlen("/l") - 1;
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "next ");
+    temp_len += strlen("next ") - 1;
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/h");
+    temp_len += strlen("/h") - 1;
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "previous");
+    temp_len = 0;
+
+    uint8_t footer_ypos = layout->footer_ypos + 2;
+    size_t curr_selected_pkg_idx =
+        layout->packages_page_index * layout->packages_render_capacity + layout->packages_cursor_ypos;
+
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "enter");
+    temp_len += strlen("enter");
+    if (strcmp(pkgs->items[curr_selected_pkg_idx].status, LPM_PACKAGE_STATUS_INSTALLED) == 0)
+    {
+        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " update ");
+        temp_len += strlen(" update ") - 1;
+        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "x");
+        temp_len += strlen("x");
+        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " uinstall ");
+        temp_len += strlen(" uinstall ") - 1;
+    }
+    else
+    {
+        // keybindings = "enter install ";
+        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " install ");
+        temp_len += strlen(" install ") - 1;
+    }
+
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "d");
+    temp_len += strlen("d");
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " dependencies ");
+    temp_len += strlen(" dependencies ") - 1;
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/");
+    temp_len += strlen("/");
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " filter ");
+    temp_len += strlen(" filter ") - 1;
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "q");
+    temp_len += strlen("q");
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " quit");
+    temp_len = 0;
 }

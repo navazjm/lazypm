@@ -20,9 +20,6 @@ typedef struct
     uint8_t header_xpos; // X position of the header text (column)
     uint8_t header_ypos; // Y position of the header text (row)
 
-    uint8_t filter_xpos; // X position of the filter input (column)
-    uint8_t filter_ypos; // Y position of the filter input (row)
-
     uint8_t packages_xpos;            // X position of the packages list (column)
     uint8_t packages_ypos;            // Y position of the packages list (row)
     uint8_t packages_cursor_ypos;     // Y position of the hovered("selected") package

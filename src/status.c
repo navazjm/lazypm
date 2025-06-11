@@ -62,5 +62,5 @@ void lpm_status_msg_display(uint8_t xpos, uint8_t ypos)
     if (_status_type == LPM_STATUS_MSG_TYPE_INFO)
         fg_color = LPM_FG_COLOR_BLUE;
 
-    tb_printf(xpos - strlen(status_msg), ypos, fg_color, LPM_BG_COLOR, status_msg);
+    tb_printf(xpos, ypos, fg_color, LPM_BG_COLOR, status_msg);
 }

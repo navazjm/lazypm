@@ -16,8 +16,6 @@ void lpm_layout_setup(LPM_Layout *layout)
     layout->max_ypos = tb_height() - layout->min_ypos;
     layout->header_xpos = layout->min_xpos;
     layout->header_ypos = layout->min_ypos;
-    layout->filter_xpos = layout->min_xpos;
-    layout->filter_ypos = 0;
     layout->packages_xpos = layout->min_xpos;
     layout->packages_ypos = 0;
     layout->packages_cursor_ypos = 0;
@@ -25,7 +23,7 @@ void lpm_layout_setup(LPM_Layout *layout)
     layout->packages_total_pages = 1;
     layout->packages_render_capacity = 0;
     layout->footer_xpos = layout->min_xpos;
-    layout->footer_ypos = layout->max_ypos - 2;
+    layout->footer_ypos = layout->max_ypos - 4;
 }
 
 void lpm_layout_teardown(LPM_Layout *layout)

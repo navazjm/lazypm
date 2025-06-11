@@ -9,6 +9,9 @@
 
 #include <stddef.h>
 
+#define LPM_PACKAGE_STATUS_INSTALLED "[*]"
+#define LPM_PACKAGE_STATUS_AVAILABLE "[-]"
+
 typedef struct
 {
     char *status;
