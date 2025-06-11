@@ -41,12 +41,7 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
 
     // pkg_name NULL -> pass empty string to get all packages
     char *cmd;
-    if (asprintf(&cmd, "xbps-query -Rs '%s'", pkg_name ? pkg_name : "") == -1)
-    {
-        // TODO: log to file -> fprintf(stderr, "[ERROR] Insufficient memory space.\nReason: %s\n", strerror(errno));
-        err_msg = "Insufficient memory space.";
-        lpm_cleanup_return(LPM_ERROR);
-    }
+    lpm_asprintf(&cmd, "xbps-query -Rs '%s'", pkg_name ? pkg_name : "");
 
     fp = popen(cmd, "r");
     if (fp == NULL)
@@ -63,7 +58,7 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
         LPM_Package pkg = {0};
         char temp = line[3];
         line[3] = '\0';
-        pkg.status = strdup(line);
+        pkg.status = lpm_strdup(line);
         line[3] = temp;
 
         size_t i = 4;
@@ -73,14 +68,14 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
         }
         temp = line[i];
         line[i] = '\0';
-        pkg.name = strdup(line + 4);
+        pkg.name = lpm_strdup(line + 4);
         line[i] = temp;
 
         while (isspace(line[i]))
         {
             i++;
         }
-        pkg.description = strdup(line + i);
+        pkg.description = lpm_strdup(line + i);
 
         lpm_da_append(&new_pkgs, pkg);
     }

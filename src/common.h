@@ -7,6 +7,10 @@
 
 #pragma once
 
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+
 #define LPM_FG_COLOR TB_DEFAULT
 #define LPM_FG_COLOR_DIM (TB_DEFAULT | TB_DIM)
 #define LPM_FG_COLOR_BLACK TB_BLACK
@@ -43,6 +47,21 @@ typedef enum
 #include <stdlib.h>
 #define LPM_FREE free
 #endif // LPM_FREE
+
+#ifndef LPM_STRLEN
+#include <string.h>
+#define LPM_STRLEN strlen
+#endif // LPM_STRLEN
+
+#ifndef LPM_STRDUP
+#include <string.h>
+#define LPM_STRDUP strdup
+#endif // LPM_STRDUP
+
+#ifndef LPM_VASPRINTF
+#include <stdio.h>
+#define LPM_VASPRINTF vasprintf
+#endif // LPM_VASPRINTF
 
 // Initial capacity of a dynamic array
 #ifndef LPM_DA_INIT_CAP
@@ -83,3 +102,28 @@ typedef enum
         result = (value);                                                                                              \
         goto cleanup;                                                                                                  \
     } while (0)
+
+static inline char *lpm_strdup(const char *s)
+{
+    char *dup = LPM_STRDUP(s);
+    if (!dup)
+    {
+        // TODO: log to file -> fprintf(stderr, "[ERROR] lpm_strdup failed. Reason: %s\n", strerror(errno));
+        LPM_ASSERT(0 && "lpm_strdup: Out of memory");
+    }
+    return dup;
+}
+
+static inline int lpm_asprintf(char **strp, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int ret = LPM_VASPRINTF(strp, fmt, args);
+    va_end(args);
+    if (ret == -1)
+    {
+        // TODO: log to file -> fprintf(stderr, "[ERROR] lpm_asprintf failed. Reason: %s\n", strerror(errno));
+        LPM_ASSERT(0 && "lpm_asprintf: Out of memory");
+    }
+    return ret;
+}

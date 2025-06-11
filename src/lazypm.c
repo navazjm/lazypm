@@ -139,7 +139,7 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
 
     const char *header_text = " LAZYPM ";
     tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR_HIGHLIGHT, header_text);
-    lpm_status_msg_display(layout->header_xpos + strlen(header_text) + 1, layout->header_ypos);
+    lpm_status_msg_display(layout->header_xpos + LPM_STRLEN(header_text) + 1, layout->header_ypos);
 
     //
     // packages
@@ -163,8 +163,8 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
     {
         size_t idx = layout->packages_page_index * layout->packages_render_capacity + i;
         LPM_Package pkg = pkgs->items[idx];
-        if (strlen(pkg.name) > longest_package_name_len)
-            longest_package_name_len = strlen(pkg.name);
+        if (LPM_STRLEN(pkg.name) > longest_package_name_len)
+            longest_package_name_len = LPM_STRLEN(pkg.name);
     }
     for (size_t i = 0; i < layout->packages_render_capacity; ++i)
     {
@@ -172,10 +172,10 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
             break;
 
         size_t idx = layout->packages_page_index * layout->packages_render_capacity + i;
-        asprintf(&temp, "%s %-*s %s", pkgs->items[idx].status, longest_package_name_len, pkgs->items[idx].name,
-                 pkgs->items[idx].description);
+        lpm_asprintf(&temp, "%s %-*s %s", pkgs->items[idx].status, longest_package_name_len, pkgs->items[idx].name,
+                     pkgs->items[idx].description);
 
-        temp_len = strlen(temp);
+        temp_len = LPM_STRLEN(temp);
         if (temp_len >= max_line_len)
         {
             temp[max_line_len - 3] = '.';
@@ -209,28 +209,28 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
 
     if (temp)
         LPM_FREE(temp);
-    asprintf(&temp, "Page %zu of %zu (%zu) | ", layout->packages_page_index + 1, layout->packages_total_pages,
-             pkgs->count);
-    temp_len = strlen(temp);
+    lpm_asprintf(&temp, "Page %zu of %zu (%zu) | ", layout->packages_page_index + 1, layout->packages_total_pages,
+                 pkgs->count);
+    temp_len = LPM_STRLEN(temp);
 
     tb_printf(layout->footer_xpos, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, temp);
     LPM_FREE(temp);
     temp = NULL;
 
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/k");
-    temp_len += strlen("/k") - 1;
+    temp_len += LPM_STRLEN("/k") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "up ");
-    temp_len += strlen("up ") - 1;
+    temp_len += LPM_STRLEN("up ") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/j");
-    temp_len += strlen("/j") - 1;
+    temp_len += LPM_STRLEN("/j") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "down ");
-    temp_len += strlen("down ") - 1;
+    temp_len += LPM_STRLEN("down ") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/l");
-    temp_len += strlen("/l") - 1;
+    temp_len += LPM_STRLEN("/l") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "next ");
-    temp_len += strlen("next ") - 1;
+    temp_len += LPM_STRLEN("next ") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/h");
-    temp_len += strlen("/h") - 1;
+    temp_len += LPM_STRLEN("/h") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, "previous");
     temp_len = 0;
 
@@ -239,33 +239,33 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
         layout->packages_page_index * layout->packages_render_capacity + layout->packages_cursor_ypos;
 
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "enter");
-    temp_len += strlen("enter");
+    temp_len += LPM_STRLEN("enter");
     if (strcmp(pkgs->items[curr_selected_pkg_idx].status, LPM_PACKAGE_STATUS_INSTALLED) == 0)
     {
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " update ");
-        temp_len += strlen(" update ") - 1;
+        temp_len += LPM_STRLEN(" update ") - 1;
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "x");
-        temp_len += strlen("x");
+        temp_len += LPM_STRLEN("x");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " uinstall ");
-        temp_len += strlen(" uinstall ") - 1;
+        temp_len += LPM_STRLEN(" uinstall ") - 1;
     }
     else
     {
         // keybindings = "enter install ";
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " install ");
-        temp_len += strlen(" install ") - 1;
+        temp_len += LPM_STRLEN(" install ") - 1;
     }
 
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "d");
-    temp_len += strlen("d");
+    temp_len += LPM_STRLEN("d");
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " dependencies ");
-    temp_len += strlen(" dependencies ") - 1;
+    temp_len += LPM_STRLEN(" dependencies ") - 1;
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/");
-    temp_len += strlen("/");
+    temp_len += LPM_STRLEN("/");
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " filter ");
-    temp_len += strlen(" filter ") - 1;
+    temp_len += LPM_STRLEN(" filter ") - 1;
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "q");
-    temp_len += strlen("q");
+    temp_len += LPM_STRLEN("q");
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, " quit");
     temp_len = 0;
 }

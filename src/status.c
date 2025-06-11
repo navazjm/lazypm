@@ -18,7 +18,7 @@ void _lpm_status_msg_set(LPM_Status_Msg_Type st, const char *msg)
 {
     if (_status_msg)
         LPM_FREE(_status_msg);
-    _status_msg = strdup(msg);
+    _status_msg = lpm_strdup(msg);
     gettimeofday(&_status_start, NULL);
     _status_type = st;
 }
