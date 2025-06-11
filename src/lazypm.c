@@ -32,7 +32,7 @@ int main(void)
     lpm_layout_setup(&layout);
 
     LPM_Packages pkgs = {0};
-    error = lpm_packages_get(&pkgs, "xbps-query -Rs ''");
+    error = lpm_packages_get(&pkgs, NULL);
 
     if (error == LPM_OK)
         lpm_run(&layout, &pkgs);

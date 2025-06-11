@@ -76,3 +76,10 @@ typedef enum
     } while (0)
 
 #define lpm_da_free(da) LPM_FREE((da).items)
+
+#define lpm_cleanup_return(value)                                                                                      \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        result = (value);                                                                                              \
+        goto cleanup;                                                                                                  \
+    } while (0)

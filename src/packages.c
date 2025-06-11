@@ -17,21 +17,12 @@ void lpm_packages_teardown(LPM_Packages *pkgs)
 {
     for (size_t i = 0; i < pkgs->count; ++i)
     {
-        if (pkgs->items[i].status)
-        {
-            LPM_FREE(pkgs->items[i].status);
-            pkgs->items[i].status = NULL;
-        }
-        if (pkgs->items[i].name)
-        {
-            LPM_FREE(pkgs->items[i].name);
-            pkgs->items[i].name = NULL;
-        }
-        if (pkgs->items[i].description)
-        {
-            LPM_FREE(pkgs->items[i].description);
-            pkgs->items[i].description = NULL;
-        }
+        LPM_FREE(pkgs->items[i].status);
+        pkgs->items[i].status = NULL;
+        LPM_FREE(pkgs->items[i].name);
+        pkgs->items[i].name = NULL;
+        LPM_FREE(pkgs->items[i].description);
+        pkgs->items[i].description = NULL;
     }
     LPM_FREE(pkgs->items);
     pkgs->items = NULL;
@@ -39,25 +30,32 @@ void lpm_packages_teardown(LPM_Packages *pkgs)
     pkgs->count = 0;
 }
 
-// TODO: store fprintf into a log file
-int lpm_packages_get(LPM_Packages *pkgs, const char *cmd)
+int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
 {
-    lpm_packages_teardown(pkgs);
-
-    FILE *fp;
+    int result = LPM_OK;
+    char *err_msg = NULL;
+    LPM_Packages new_pkgs = {0};
+    FILE *fp = NULL;
     char *line = NULL;
     size_t len = 0;
+
+    // pkg_name NULL -> pass empty string to get all packages
+    char *cmd;
+    if (asprintf(&cmd, "xbps-query -Rs '%s'", pkg_name ? pkg_name : "") == -1)
+    {
+        // TODO: log to file -> fprintf(stderr, "[ERROR] Insufficient memory space.\nReason: %s\n", strerror(errno));
+        err_msg = "Insufficient memory space.";
+        lpm_cleanup_return(LPM_ERROR);
+    }
 
     fp = popen(cmd, "r");
     if (fp == NULL)
     {
-        fprintf(stderr, "[ERROR] popen() failed for command: \"%s\"\nReason: %s\n", cmd, strerror(errno));
+        // TODO: log to file -> fprintf(stderr, "[ERROR] popen() failed for command: \"%s\"\nReason: %s\n", cmd,
+        // strerror(errno));
 
-        char *status_msg;
-        asprintf(&status_msg, "Failed to get packages: %s", cmd);
-        lpm_status_msg_set_error(status_msg);
-        LPM_FREE(status_msg);
-        return LPM_ERROR;
+        err_msg = "Failed to retrieve package(s).";
+        lpm_cleanup_return(LPM_ERROR);
     }
 
     while (getline(&line, &len, fp) != -1)
@@ -84,34 +82,43 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *cmd)
         }
         pkg.description = strdup(line + i);
 
-        lpm_da_append(pkgs, pkg);
+        lpm_da_append(&new_pkgs, pkg);
     }
 
-    free(line);
-
-    int result = LPM_OK;
     if (ferror(fp))
     {
-        fprintf(stderr, "[ERROR] An error occurred while reading the output of: \"%s\"\nReason: %s\n", cmd,
-                strerror(errno));
+        // TODO: log to file -> fprintf(stderr, "[ERROR] An error occurred while reading the output of: \"%s\"\nReason:
+        // %s\n", cmd, strerror(errno));
 
-        char *status_msg;
-        asprintf(&status_msg, "Failed to get packages: %s", cmd);
-        lpm_status_msg_set_error(status_msg);
-        LPM_FREE(status_msg);
-        result = LPM_ERROR;
+        err_msg = "Failed to parse query results.";
+        lpm_cleanup_return(LPM_ERROR);
     }
 
-    if (pclose(fp) == -1)
+cleanup:
+    LPM_FREE(cmd);
+    LPM_FREE(line);
+    if (fp && pclose(fp) == -1)
     {
-        fprintf(stderr, "[ERROR] Failed to close command stream: \"%s\"\nReason: %s\n", cmd, strerror(errno));
+        // since pclose failing isn't detrimental to our application, we can just silently
+        // log an error if we don't already have an error message.
 
-        char *status_msg;
-        asprintf(&status_msg, "Failed to get packages: %s", cmd);
-        lpm_status_msg_set_error(status_msg);
-        LPM_FREE(status_msg);
-        result = LPM_ERROR;
+        // TODO: log to file -> fprintf(stderr, "[WARNING] Failed to close command stream: \"%s\"\nReason: %s\n", cmd,
+        // strerror(errno));
+        if (err_msg == NULL)
+            err_msg = "Command succeeded but failed to close pipe stream.";
     }
+    if (result == LPM_OK)
+    {
+        // clear previous packages and set new packages
+        lpm_packages_teardown(pkgs);
+        *pkgs = new_pkgs;
+    }
+    else
+    {
+        lpm_packages_teardown(&new_pkgs);
+    }
+    if (err_msg)
+        lpm_status_msg_set_error(err_msg);
 
     return result;
 }

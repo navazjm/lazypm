@@ -27,4 +27,4 @@ typedef struct
 } LPM_Packages;
 
 void lpm_packages_teardown(LPM_Packages *pkgs);
-int lpm_packages_get(LPM_Packages *pkgs, const char *cmd);
+int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name);
