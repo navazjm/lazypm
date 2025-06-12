@@ -7,7 +7,6 @@
 
 #include "status.h"
 #include "common.h"
-#include "termbox2.h"
 
 static char *_status_msg = NULL;
 static struct timeval _status_start;

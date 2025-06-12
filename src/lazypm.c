@@ -5,14 +5,11 @@
 // lazypm.c - Entry point into the lazypm tui application.
 //
 
-#include <stdio.h>
-#include <string.h>
 #define TB_IMPL
 
 #include "common.h"
 #include "layout.h"
 #include "status.h"
-#include "termbox2.h"
 
 // forward declarations
 void lpm_run(LPM_Layout *layout, LPM_Packages *pkgs);
@@ -24,7 +21,7 @@ int main(void)
     int error = tb_init();
     if (error)
     {
-        fprintf(stderr, "[ERROR] Failed to initialized termbox2 with error code %d\n", error);
+        LPM_LOG_ERROR("Failed to initialized termbox2\n\tReason  : %s\n", tb_strerror(error));
         return error;
     }
 
