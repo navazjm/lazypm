@@ -145,6 +145,9 @@ typedef enum
     LPM_OK,
     LPM_ERROR,
     LPM_QUIT,
+    LPM_ERROR_PIPE_OPEN,
+    LPM_ERROR_PIPE_CLOSE,
+    LPM_ERROR_FILE_READ,
 } LPM_Exit_Code;
 
 //
