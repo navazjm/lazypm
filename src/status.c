@@ -30,7 +30,8 @@ static void _lpm_status_msg_update(void)
     struct timeval now;
     gettimeofday(&now, NULL);
 
-    long elapsed_ms = (now.tv_sec - _status_start.tv_sec) * 1000L + (now.tv_usec - _status_start.tv_usec) / 1000L;
+    long elapsed_ms =
+        (now.tv_sec - _status_start.tv_sec) * 1000L + (now.tv_usec - _status_start.tv_usec) / 1000L;
 
     if (elapsed_ms >= _status_wait_ms)
     {

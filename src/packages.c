@@ -77,7 +77,8 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
 
     if (ferror(fp))
     {
-        LPM_LOG_ERROR("An error occurred while reading the output of: \"%s\"\n\tReason:%s\n", cmd, strerror(errno));
+        LPM_LOG_ERROR("An error occurred while reading the output of: \"%s\"\n\tReason:%s\n", cmd,
+                      strerror(errno));
 
         err_msg = "Failed to parse query results.";
         LPM_CLEANUP_RETURN(LPM_ERROR);
@@ -91,7 +92,8 @@ cleanup:
         // since pclose failing isn't detrimental to our application, we can just silently
         // log an error if we don't already have an error message.
 
-        LPM_LOG_WARNING("Failed to close command stream: \"%s\"\nReason: %s\n", cmd, strerror(errno));
+        LPM_LOG_WARNING("Failed to close command stream: \"%s\"\nReason: %s\n", cmd,
+                        strerror(errno));
         if (err_msg == NULL)
             err_msg = "Command succeeded but failed to close pipe stream.";
     }

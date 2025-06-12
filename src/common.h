@@ -20,12 +20,12 @@
 
 #define LPM_UNUSED(value) (void)(value)
 
-#define LPM_UNREACHABLE(message)                                                                                       \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        tb_shutdown();                                                                                                 \
-        fprintf(stderr, "%s:%d: UNREACHABLE: %s\n", __FILE__, __LINE__, message);                                      \
-        abort();                                                                                                       \
+#define LPM_UNREACHABLE(message)                                                                   \
+    do                                                                                             \
+    {                                                                                              \
+        tb_shutdown();                                                                             \
+        fprintf(stderr, "%s:%d: UNREACHABLE: %s\n", __FILE__, __LINE__, message);                  \
+        abort();                                                                                   \
     } while (0)
 
 #ifndef LPM_ASSERT
@@ -68,39 +68,39 @@
 #define LPM_DA_INIT_CAP 256
 #endif // LPM_DA_INIT_CAP
 
-#define LPM_DA_RESERVE(da, expected_capacity)                                                                          \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        if ((expected_capacity) > (da)->capacity)                                                                      \
-        {                                                                                                              \
-            if ((da)->capacity == 0)                                                                                   \
-            {                                                                                                          \
-                (da)->capacity = LPM_DA_INIT_CAP;                                                                      \
-            }                                                                                                          \
-            while ((expected_capacity) > (da)->capacity)                                                               \
-            {                                                                                                          \
-                (da)->capacity *= 2;                                                                                   \
-            }                                                                                                          \
-            (da)->items = LPM_REALLOC((da)->items, (da)->capacity * sizeof(*(da)->items));                             \
-            LPM_ASSERT((da)->items != NULL && "Buy more RAM lol");                                                     \
-        }                                                                                                              \
+#define LPM_DA_RESERVE(da, expected_capacity)                                                      \
+    do                                                                                             \
+    {                                                                                              \
+        if ((expected_capacity) > (da)->capacity)                                                  \
+        {                                                                                          \
+            if ((da)->capacity == 0)                                                               \
+            {                                                                                      \
+                (da)->capacity = LPM_DA_INIT_CAP;                                                  \
+            }                                                                                      \
+            while ((expected_capacity) > (da)->capacity)                                           \
+            {                                                                                      \
+                (da)->capacity *= 2;                                                               \
+            }                                                                                      \
+            (da)->items = LPM_REALLOC((da)->items, (da)->capacity * sizeof(*(da)->items));         \
+            LPM_ASSERT((da)->items != NULL && "Buy more RAM lol");                                 \
+        }                                                                                          \
     } while (0)
 
 // Append an item to a dynamic array
-#define LPM_DA_APPEND(da, item)                                                                                        \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        LPM_DA_RESERVE((da), (da)->count + 1);                                                                         \
-        (da)->items[(da)->count++] = (item);                                                                           \
+#define LPM_DA_APPEND(da, item)                                                                    \
+    do                                                                                             \
+    {                                                                                              \
+        LPM_DA_RESERVE((da), (da)->count + 1);                                                     \
+        (da)->items[(da)->count++] = (item);                                                       \
     } while (0)
 
 #define LPM_DA_FREE(da) LPM_FREE((da).items)
 
-#define LPM_CLEANUP_RETURN(value)                                                                                      \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        result = (value);                                                                                              \
-        goto cleanup;                                                                                                  \
+#define LPM_CLEANUP_RETURN(value)                                                                  \
+    do                                                                                             \
+    {                                                                                              \
+        result = (value);                                                                          \
+        goto cleanup;                                                                              \
     } while (0)
 
 static inline char *lpm_strdup(const char *s)
@@ -182,8 +182,8 @@ static inline void _lpm_log(LPM_Log_Level level, const char *file, int line, con
 
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
-    snprintf(path + len, sizeof(path) - len, "/lazypm-%04d-%02d-%02d.log", tm_info->tm_year + 1900, tm_info->tm_mon + 1,
-             tm_info->tm_mday);
+    snprintf(path + len, sizeof(path) - len, "/lazypm-%04d-%02d-%02d.log", tm_info->tm_year + 1900,
+             tm_info->tm_mon + 1, tm_info->tm_mday);
 
     FILE *fd = fopen(path, "a");
     LPM_ASSERT(fd != NULL && "failed to open log file...");
@@ -219,5 +219,7 @@ static inline void _lpm_log(LPM_Log_Level level, const char *file, int line, con
 }
 
 #define LPM_LOG_INFO(fmt, ...) _lpm_log(LPM_LOG_LEVEL_INFO, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-#define LPM_LOG_WARNING(fmt, ...) _lpm_log(LPM_LOG_LEVEL_WARNING, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-#define LPM_LOG_ERROR(fmt, ...) _lpm_log(LPM_LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LPM_LOG_WARNING(fmt, ...)                                                                  \
+    _lpm_log(LPM_LOG_LEVEL_WARNING, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LPM_LOG_ERROR(fmt, ...)                                                                    \
+    _lpm_log(LPM_LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, ##__VA_ARGS__)

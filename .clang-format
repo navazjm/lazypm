@@ -1,5 +1,5 @@
 ---
 BasedOnStyle: Microsoft
 IndentWidth: 4
-ColumnLimit: 120
+ColumnLimit: 100
 
