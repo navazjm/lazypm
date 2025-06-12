@@ -68,7 +68,7 @@
 #define LPM_DA_INIT_CAP 256
 #endif // LPM_DA_INIT_CAP
 
-#define lpm_da_reserve(da, expected_capacity)                                                                          \
+#define LPM_DA_RESERVE(da, expected_capacity)                                                                          \
     do                                                                                                                 \
     {                                                                                                                  \
         if ((expected_capacity) > (da)->capacity)                                                                      \
@@ -87,16 +87,16 @@
     } while (0)
 
 // Append an item to a dynamic array
-#define lpm_da_append(da, item)                                                                                        \
+#define LPM_DA_APPEND(da, item)                                                                                        \
     do                                                                                                                 \
     {                                                                                                                  \
-        lpm_da_reserve((da), (da)->count + 1);                                                                         \
+        LPM_DA_RESERVE((da), (da)->count + 1);                                                                         \
         (da)->items[(da)->count++] = (item);                                                                           \
     } while (0)
 
-#define lpm_da_free(da) LPM_FREE((da).items)
+#define LPM_DA_FREE(da) LPM_FREE((da).items)
 
-#define lpm_cleanup_return(value)                                                                                      \
+#define LPM_CLEANUP_RETURN(value)                                                                                      \
     do                                                                                                                 \
     {                                                                                                                  \
         result = (value);                                                                                              \

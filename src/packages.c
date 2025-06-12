@@ -45,7 +45,7 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
     {
         LPM_LOG_ERROR("popen() failed for command: \"%s\"\n\tReason  : %s\n", cmd, strerror(errno));
         err_msg = "Failed to retrieve package(s).";
-        lpm_cleanup_return(LPM_ERROR);
+        LPM_CLEANUP_RETURN(LPM_ERROR);
     }
 
     while (getline(&line, &len, fp) != -1)
@@ -72,7 +72,7 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
         }
         pkg.description = lpm_strdup(line + i);
 
-        lpm_da_append(&new_pkgs, pkg);
+        LPM_DA_APPEND(&new_pkgs, pkg);
     }
 
     if (ferror(fp))
@@ -80,7 +80,7 @@ int lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
         LPM_LOG_ERROR("An error occurred while reading the output of: \"%s\"\n\tReason:%s\n", cmd, strerror(errno));
 
         err_msg = "Failed to parse query results.";
-        lpm_cleanup_return(LPM_ERROR);
+        LPM_CLEANUP_RETURN(LPM_ERROR);
     }
 
 cleanup:
