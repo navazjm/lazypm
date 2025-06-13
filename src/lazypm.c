@@ -7,7 +7,6 @@
 
 #define TB_IMPL
 
-#include "common.h"
 #include "layout.h"
 #include "status.h"
 
@@ -63,17 +62,20 @@ void lpm_run(LPM_Layout *layout, LPM_Packages *pkgs)
 
 uint8_t lpm_event_handler(struct tb_event *evt, LPM_Layout *layout, LPM_Packages *pkgs)
 {
+
+    size_t items_remaining =
+        pkgs->count - layout->packages_page_index * layout->packages_render_capacity;
+    size_t items_to_render = items_remaining < layout->packages_render_capacity
+                                 ? items_remaining
+                                 : layout->packages_render_capacity;
+    size_t curr_selected_pkg_idx = layout->packages_page_index * layout->packages_render_capacity +
+                                   layout->packages_cursor_ypos;
+
     switch (evt->type)
     {
     case TB_EVENT_KEY:
         if (evt->key == TB_KEY_ESC || evt->key == TB_KEY_CTRL_C || evt->ch == 'q')
             return LPM_QUIT;
-
-        size_t items_remaining =
-            pkgs->count - layout->packages_page_index * layout->packages_render_capacity;
-        size_t items_to_render = items_remaining < layout->packages_render_capacity
-                                     ? items_remaining
-                                     : layout->packages_render_capacity;
 
         if (evt->ch == 'H') // go to first page
         {
@@ -114,6 +116,18 @@ uint8_t lpm_event_handler(struct tb_event *evt, LPM_Layout *layout, LPM_Packages
                   evt->ch == 'h')) // go to previous page, with bounds check
         {
             layout->packages_page_index--;
+        }
+        else if (evt->key == TB_KEY_ENTER)
+        {
+            LPM_Package pkg = pkgs->items[curr_selected_pkg_idx];
+            char *status_msg;
+            if (strcmp(pkg.status, LPM_PACKAGE_STATUS_AVAILABLE) == 0)
+                lpm_asprintf(&status_msg, "Installing package '%s'... ", pkg.name);
+            else
+                lpm_asprintf(&status_msg, "Updating package '%s'... ", pkg.name);
+            lpm_status_msg_set_info(status_msg);
+            LPM_FREE(status_msg);
+            lpm_packages_install(&pkg);
         }
         break;
     case TB_EVENT_RESIZE:
@@ -199,7 +213,7 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
             for (int j = layout->packages_xpos + temp_len - 1; j < layout->max_xpos; ++j)
             {
                 // highlight remaining cells of the hovered package row
-                tb_printf(j, layout->packages_ypos, LPM_FG_COLOR, LPM_BG_COLOR_HIGHLIGHT, " ");
+                tb_set_cell(j, layout->packages_ypos, ' ', LPM_FG_COLOR, LPM_BG_COLOR_HIGHLIGHT);
             }
         }
         else

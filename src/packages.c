@@ -6,7 +6,6 @@
 //
 
 #include "packages.h"
-#include "common.h"
 #include "status.h"
 #include <ctype.h>
 
@@ -60,15 +59,30 @@ static uint8_t _lpm_packages_run_cmd(const char *cmd, LPM_Packages_Parse_Line_Ca
 
 cleanup:
     LPM_FREE(line);
-    if (fp && pclose(fp) == -1)
+    if (fp)
     {
-        // since pclose failing isn't detrimental to our application, we can just silently
-        // log an error if we don't already have an error.
-
-        LPM_LOG_WARNING("Failed to close command stream: \"%s\"\nReason: %s\n", cmd,
-                        strerror(errno));
-        if (result != LPM_ERROR_FILE_READ)
-            result = LPM_ERROR_PIPE_CLOSE;
+        int exit_status = pclose(fp);
+        if (exit_status == -1)
+        {
+            LPM_LOG_WARNING("Failed to close command stream: \"%s\"\nReason: %s\n", cmd,
+                            strerror(errno));
+            if (result != LPM_ERROR_FILE_READ)
+                result = LPM_ERROR_PIPE_CLOSE;
+        }
+        else if (WIFEXITED(exit_status))
+        {
+            int code = WEXITSTATUS(exit_status);
+            if (code != 0)
+            {
+                LPM_LOG_ERROR("Command exited with non-zero status: %d\n", code);
+                result = LPM_ERROR_COMMAND_FAIL; // define this constant
+            }
+        }
+        else
+        {
+            LPM_LOG_ERROR("Command did not exit normally: \"%s\"\n", cmd);
+            result = LPM_ERROR_COMMAND_FAIL;
+        }
     }
     return result;
 }
@@ -124,12 +138,56 @@ uint8_t lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
     }
 
     if (result == LPM_ERROR_PIPE_OPEN)
-        lpm_status_msg_set_error("Failed to retrieve package(s).");
+        lpm_status_msg_set_error("Failed to open pipe stream.");
     else if (result == LPM_ERROR_FILE_READ)
-        lpm_status_msg_set_error("Failed to parse query results.");
+        lpm_status_msg_set_error("Failed to parse xbps-query results.");
     else
         LPM_UNREACHABLE("lpm_packages_get error checking");
 
     lpm_packages_teardown(&new_pkgs);
     return LPM_ERROR;
+}
+
+uint8_t lpm_packages_install(LPM_Package *pkg)
+{
+    if (pkg == NULL || pkg->name == NULL)
+        return LPM_ERROR;
+
+    char *cmd;
+    lpm_asprintf(&cmd, "sudo xbps-install -Sy '%s' 2>&1", pkg->name);
+
+    uint8_t result = _lpm_packages_run_cmd(cmd, NULL, NULL);
+    LPM_FREE(cmd);
+
+    if (result == LPM_ERROR_PIPE_OPEN)
+        lpm_status_msg_set_error("Failed to open pipe stream.");
+    else if (result == LPM_ERROR_FILE_READ)
+        lpm_status_msg_set_error("Failed to parse xbps-install results.");
+    else if (result == LPM_ERROR_COMMAND_FAIL)
+        lpm_status_msg_set_error("xbps-install command failed.");
+    else if (result == LPM_OK || result == LPM_ERROR_PIPE_CLOSE)
+    {
+        // TODO: debug this...
+        bool is_update = strcmp(pkg->status, LPM_PACKAGE_STATUS_INSTALLED) == 0;
+        LPM_FREE(pkg->status);
+        pkg->status = lpm_strdup(LPM_PACKAGE_STATUS_INSTALLED);
+
+        if (result == LPM_OK)
+        {
+            char *status_msg;
+            char *action = "installed";
+            if (is_update)
+                action = "updated";
+            lpm_asprintf(&status_msg, "Package '%s' %s successfully.", pkg->name, action);
+            lpm_status_msg_set_success(status_msg);
+            LPM_FREE(status_msg);
+        }
+        else
+            lpm_status_msg_set_info(
+                "xbps-install command succeeded but failed to close pipe stream.");
+    }
+    else
+        LPM_UNREACHABLE("lpm_packages_install error checking");
+
+    return result;
 }
