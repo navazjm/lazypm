@@ -191,3 +191,27 @@ uint8_t lpm_packages_install(LPM_Package *pkg)
 
     return result;
 }
+
+uint8_t lpm_packages_udate_all()
+{
+    char *cmd = "sudo xbps-install -Syu 2>&1";
+    uint8_t result = _lpm_packages_run_cmd(cmd, NULL, NULL);
+
+    if (result == LPM_ERROR_PIPE_OPEN)
+        lpm_status_msg_set_error("Failed to open pipe stream to update all packages.");
+    else if (result == LPM_ERROR_FILE_READ)
+        lpm_status_msg_set_error("Failed to parse update results.");
+    else if (result == LPM_ERROR_COMMAND_FAIL)
+        lpm_status_msg_set_error("Command failed to update all packages.");
+    else if (result == LPM_OK)
+        lpm_status_msg_set_success("Updated all packages successfully.");
+    else if (result == LPM_ERROR_PIPE_CLOSE)
+    {
+        lpm_status_msg_set_info("Update command succeeded but failed to close pipe stream.");
+        result = LPM_OK;
+    }
+    else
+        LPM_UNREACHABLE("lpm_packages_update_all error checking");
+
+    return result;
+}

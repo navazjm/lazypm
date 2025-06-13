@@ -129,6 +129,11 @@ uint8_t lpm_event_handler(struct tb_event *evt, LPM_Layout *layout, LPM_Packages
             LPM_FREE(status_msg);
             lpm_packages_install(&pkg);
         }
+        else if (evt->ch == 'u')
+        {
+            lpm_status_msg_set_info("Updating all installed packages. This may take a moment...");
+            lpm_packages_udate_all();
+        }
         break;
     case TB_EVENT_RESIZE:
         break;
@@ -290,6 +295,11 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
         temp_len += LPM_STRLEN(" install ") - 1;
     }
 
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "u");
+    temp_len += LPM_STRLEN("u");
+    tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
+              " update all ");
+    temp_len += LPM_STRLEN(" update all ") - 1;
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "d");
     temp_len += LPM_STRLEN("d");
     tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
