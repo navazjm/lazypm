@@ -143,7 +143,9 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
     const char *header_text = " LAZYPM ";
     tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM,
               LPM_BG_COLOR_HIGHLIGHT, header_text);
-    lpm_status_msg_display(layout->header_xpos + LPM_STRLEN(header_text) + 1, layout->header_ypos);
+
+    lpm_status_set_position(layout->header_xpos + LPM_STRLEN(header_text) + 1, layout->header_ypos);
+    lpm_status_msg_display(false);
 
     //
     // packages

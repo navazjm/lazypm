@@ -12,8 +12,16 @@ static char *_status_msg = NULL;
 static struct timeval _status_start;
 static LPM_Status_Msg_Type _status_type = LPM_STATUS_MSG_TYPE_INACTIVE;
 static int _status_wait_ms = 5000;
+static uint8_t _status_xpos = 0;
+static uint8_t _status_ypos = 0;
 
-void _lpm_status_msg_set(LPM_Status_Msg_Type st, const char *msg)
+void lpm_status_set_position(uint8_t xpos, uint8_t ypos)
+{
+    _status_xpos = xpos;
+    _status_ypos = ypos;
+}
+
+static void _lpm_status_msg_set(LPM_Status_Msg_Type st, const char *msg)
 {
     if (_status_msg)
         LPM_FREE(_status_msg);
@@ -46,13 +54,21 @@ static const char *_lpm_status_msg_get(void)
     return _status_msg;
 }
 
-void lpm_status_msg_display(uint8_t xpos, uint8_t ypos)
+void lpm_status_msg_display(bool flush)
 {
     _lpm_status_msg_update();
 
     const char *status_msg = _lpm_status_msg_get();
     if (!status_msg)
         return;
+
+    if (flush)
+    {
+        for (int x = _status_xpos; x < tb_width(); ++x)
+        {
+            tb_set_cell(x, _status_ypos, ' ', LPM_FG_COLOR, LPM_BG_COLOR);
+        }
+    }
 
     uint32_t fg_color = LPM_FG_COLOR; // LPM_Status_Msg_Type_Default
     if (_status_type == LPM_STATUS_MSG_TYPE_SUCCESS)
@@ -62,5 +78,12 @@ void lpm_status_msg_display(uint8_t xpos, uint8_t ypos)
     if (_status_type == LPM_STATUS_MSG_TYPE_INFO)
         fg_color = LPM_FG_COLOR_BLUE;
 
-    tb_printf(xpos, ypos, fg_color, LPM_BG_COLOR, status_msg);
+    tb_printf(_status_xpos, _status_ypos, fg_color, LPM_BG_COLOR, status_msg);
+}
+
+void lpm_status_set_and_flush(LPM_Status_Msg_Type st, const char *msg)
+{
+    _lpm_status_msg_set(st, msg);
+    lpm_status_msg_display(true);
+    tb_present();
 }

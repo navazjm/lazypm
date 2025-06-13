@@ -10,6 +10,7 @@
 #include "termbox2.h"
 #include <errno.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <sys/stat.h>
 #include <time.h>
 
