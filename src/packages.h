@@ -31,3 +31,4 @@ void lpm_packages_teardown(LPM_Packages *pkgs);
 uint8_t lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name);
 uint8_t lpm_packages_install(LPM_Package *pkg);
 uint8_t lpm_packages_udate_all();
+uint8_t lpm_packages_uninstall(LPM_Package *pkg);

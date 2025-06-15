@@ -6,6 +6,7 @@
 //
 
 #include "packages.h"
+#include "common.h"
 #include "status.h"
 #include <ctype.h>
 
@@ -212,6 +213,36 @@ uint8_t lpm_packages_udate_all()
     }
     else
         LPM_UNREACHABLE("lpm_packages_update_all error checking");
+
+    return result;
+}
+
+uint8_t lpm_packages_uninstall(LPM_Package *pkg)
+{
+
+    char *cmd;
+    lpm_asprintf(&cmd, "sudo xbps-remove -yo '%s' 2>&1", pkg->name);
+    uint8_t result = _lpm_packages_run_cmd(cmd, NULL, NULL);
+    LPM_FREE(cmd);
+
+    if (result == LPM_ERROR_PIPE_OPEN)
+        lpm_status_msg_set_error("Failed to open pipe stream to uninstall package.");
+    else if (result == LPM_ERROR_FILE_READ)
+        lpm_status_msg_set_error("Failed to parse uninstall results.");
+    else if (result == LPM_ERROR_COMMAND_FAIL)
+        lpm_status_msg_set_error("Command failed to uninstall package.");
+    else if (result == LPM_OK || result == LPM_ERROR_PIPE_CLOSE)
+    {
+        LPM_FREE(pkg->status);
+        pkg->status = LPM_STRDUP(LPM_PACKAGE_STATUS_AVAILABLE);
+        if (result == LPM_OK)
+            lpm_status_msg_set_success("Uninstalled package successfully.");
+        else
+            lpm_status_msg_set_info("Uninstall command succeeded but failed to close pipe stream.");
+        result = LPM_OK;
+    }
+    else
+        LPM_UNREACHABLE("lpm_packages_uninstall error checking");
 
     return result;
 }
