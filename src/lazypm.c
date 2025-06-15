@@ -132,7 +132,7 @@ uint8_t lpm_event_handler(struct tb_event *evt, LPM_Layout *layout, LPM_Packages
         else if (evt->ch == 'u')
         {
             lpm_status_msg_set_info("Updating all installed packages. This may take a moment...");
-            lpm_packages_udate_all();
+            lpm_packages_update_all();
         }
         else if (evt->ch == 'x')
         {

@@ -193,7 +193,7 @@ uint8_t lpm_packages_install(LPM_Package *pkg)
     return result;
 }
 
-uint8_t lpm_packages_udate_all()
+uint8_t lpm_packages_update_all()
 {
     char *cmd = "sudo xbps-install -Syu 2>&1";
     uint8_t result = _lpm_packages_run_cmd(cmd, NULL, NULL);
