@@ -23,7 +23,7 @@ Planned and in-progress work for upcoming versions of `lazypm`.
     - [x] Status messages
     - [X] Log debug info to a file.
     - [x] Install/update selected package
-    - [ ] Update all packages
+    - [x] Update all packages
     - [ ] Uninstall selected package
     - [ ] Filter packages
         - [ ] need separate event handler to handle keypresses
@@ -39,8 +39,15 @@ Planned and in-progress work for upcoming versions of `lazypm`.
 
 ### Under Consideration
 
+- [ ] Run commands in `dry mode` to see results before running the command 
 - [ ] Allow users to set color scheme
+  - use env_vars or config file
 - [ ] Allow users to set custom keybindings 
+  - use env_vars or config file
+- [ ] Allow users to specify default options to various xbps commands 
+  - Example: by default, lazypm runs `xbps-install -Syu ...`, allow for user to change
+`-Syu`
+- [ ] Support `xbps-src`??
 
 ## Conventions
 
