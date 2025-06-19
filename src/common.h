@@ -136,6 +136,7 @@ static inline int lpm_asprintf(char **strp, const char *fmt, ...)
 #define LPM_FG_COLOR_BLUE TB_BLUE
 #define LPM_BG_COLOR 0
 #define LPM_BG_COLOR_HIGHLIGHT TB_MAGENTA
+#define LPM_BG_COLOR_HIGHLIGHT_FILTER TB_BLUE
 
 //
 // Exit Codes
