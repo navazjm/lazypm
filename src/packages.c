@@ -116,20 +116,15 @@ static void _lpm_packages_get_callback(char *line, void *data)
 
 uint8_t lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
 {
-    LPM_Packages new_pkgs = {0};
-
     // pkg_name NULL -> pass empty string to get all packages
     char *cmd;
     lpm_asprintf(&cmd, "xbps-query -Rs '%s'", pkg_name ? pkg_name : "");
 
-    uint8_t result = _lpm_packages_run_cmd(cmd, _lpm_packages_get_callback, &new_pkgs);
+    uint8_t result = _lpm_packages_run_cmd(cmd, _lpm_packages_get_callback, pkgs);
     LPM_FREE(cmd);
 
     if (result == LPM_OK || result == LPM_ERROR_PIPE_CLOSE)
     {
-        // clear previous packages and set new packages
-        lpm_packages_teardown(pkgs);
-        *pkgs = new_pkgs;
         if (result == LPM_ERROR_PIPE_CLOSE)
             lpm_status_msg_set_info("Query command succeeded but failed to close pipe stream.");
         return LPM_OK;
@@ -144,7 +139,6 @@ uint8_t lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
     else
         LPM_UNREACHABLE("lpm_packages_get error checking");
 
-    lpm_packages_teardown(&new_pkgs);
     return LPM_ERROR;
 }
 
