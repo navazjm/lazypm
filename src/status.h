@@ -18,11 +18,12 @@ typedef enum
     LPM_STATUS_MSG_TYPE_INFO,
 } LPM_Status_Msg_Type;
 
-void lpm_status_set_position(uint8_t xpos, uint8_t ypos);
+void lpm_status_msg_set_position(uint8_t xpos, uint8_t ypos);
 void lpm_status_msg_display(bool flush);
 
-void lpm_status_set_and_flush(LPM_Status_Msg_Type st, const char *msg);
-#define lpm_status_msg_set(msg) lpm_status_set_and_flush(LPM_STATUS_MSG_TYPE_DEFAULT, msg)
-#define lpm_status_msg_set_success(msg) lpm_status_set_and_flush(LPM_STATUS_MSG_TYPE_SUCCESS, msg)
-#define lpm_status_msg_set_error(msg) lpm_status_set_and_flush(LPM_STATUS_MSG_TYPE_ERROR, msg)
-#define lpm_status_msg_set_info(msg) lpm_status_set_and_flush(LPM_STATUS_MSG_TYPE_INFO, msg)
+void lpm_status_msg_set_and_display(LPM_Status_Msg_Type st, const char *msg);
+#define lpm_status_msg_set(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_DEFAULT, msg)
+#define lpm_status_msg_set_success(msg)                                                            \
+    lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_SUCCESS, msg)
+#define lpm_status_msg_set_error(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_ERROR, msg)
+#define lpm_status_msg_set_info(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_INFO, msg)

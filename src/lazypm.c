@@ -294,8 +294,8 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
         header_text = " LAZYPM ";
         tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM,
                   LPM_BG_COLOR_HIGHLIGHT, header_text);
-        lpm_status_set_position(layout->header_xpos + LPM_STRLEN(header_text) + 1,
-                                layout->header_ypos);
+        lpm_status_msg_set_position(layout->header_xpos + LPM_STRLEN(header_text) + 1,
+                                    layout->header_ypos);
     }
     else if (lpm_tui_mode == LPM_TUI_MODE_FILTER)
     {
@@ -311,9 +311,9 @@ void lpm_display(LPM_Layout *layout, LPM_Packages *pkgs)
                         LPM_BG_COLOR_HIGHLIGHT_FILTER);
         }
         filter_cursor = filter_cursor_render_count++ % 20 < 10;
-        lpm_status_set_position(layout->header_xpos + LPM_STRLEN(header_text) + 1 +
-                                    strlen(filter_text) + 3,
-                                layout->header_ypos);
+        lpm_status_msg_set_position(layout->header_xpos + LPM_STRLEN(header_text) + 1 +
+                                        strlen(filter_text) + 3,
+                                    layout->header_ypos);
     }
     else
     {
