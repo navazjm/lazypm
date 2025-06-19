@@ -93,17 +93,14 @@ static void _lpm_packages_get_callback(char *line, void *data)
     LPM_Packages *pkgs = (LPM_Packages *)data;
 
     LPM_Package pkg = {0};
-    char temp = line[3];
-    line[3] = '\0';
-    pkg.status = lpm_strdup(line);
-    line[3] = temp;
+    pkg.status = strndup(line, 3);
 
     size_t i = 4;
     while (!isspace(line[i]))
     {
         i++;
     }
-    temp = line[i];
+    char temp = line[i];
     line[i] = '\0';
     pkg.name = lpm_strdup(line + 4);
     line[i] = temp;
