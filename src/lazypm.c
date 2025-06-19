@@ -119,15 +119,15 @@ uint8_t lpm_event_handler(struct tb_event *evt, LPM_Layout *layout, LPM_Packages
         }
         else if (evt->key == TB_KEY_ENTER)
         {
-            LPM_Package pkg = pkgs->items[curr_selected_pkg_idx];
+            LPM_Package *pkg = &pkgs->items[curr_selected_pkg_idx];
             char *status_msg;
-            if (strcmp(pkg.status, LPM_PACKAGE_STATUS_AVAILABLE) == 0)
-                lpm_asprintf(&status_msg, "Installing package '%s'... ", pkg.name);
+            if (strcmp(pkg->status, LPM_PACKAGE_STATUS_AVAILABLE) == 0)
+                lpm_asprintf(&status_msg, "Installing package '%s'... ", pkg->name);
             else
-                lpm_asprintf(&status_msg, "Updating package '%s'... ", pkg.name);
+                lpm_asprintf(&status_msg, "Updating package '%s'... ", pkg->name);
             lpm_status_msg_set_info(status_msg);
             LPM_FREE(status_msg);
-            lpm_packages_install(&pkg);
+            lpm_packages_install(pkg);
         }
         else if (evt->ch == 'u')
         {
@@ -136,14 +136,14 @@ uint8_t lpm_event_handler(struct tb_event *evt, LPM_Layout *layout, LPM_Packages
         }
         else if (evt->ch == 'x')
         {
-            LPM_Package pkg = pkgs->items[curr_selected_pkg_idx];
-            if (strcmp(pkg.status, LPM_PACKAGE_STATUS_INSTALLED) == 0)
+            LPM_Package *pkg = &pkgs->items[curr_selected_pkg_idx];
+            if (strcmp(pkg->status, LPM_PACKAGE_STATUS_INSTALLED) == 0)
             {
                 char *status_msg;
-                lpm_asprintf(&status_msg, "Uninstalling package '%s'... ", pkg.name);
+                lpm_asprintf(&status_msg, "Uninstalling package '%s'... ", pkg->name);
                 lpm_status_msg_set_info(status_msg);
                 LPM_FREE(status_msg);
-                lpm_packages_uninstall(&pkg);
+                lpm_packages_uninstall(pkg);
             }
         }
         break;
