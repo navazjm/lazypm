@@ -6,7 +6,6 @@
 //
 
 #include "status.h"
-#include "common.h"
 
 #define STATUS_WAIT_TIME_MS 5000
 

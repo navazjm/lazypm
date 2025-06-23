@@ -2,13 +2,20 @@
 // Copyright (c) 2025 Michael Navarro
 // MIT license, see LICENSE for more
 //
-// layout.h - Lazypm TUI layout
+// tui.h - Lazypm TUI
 //
 
 #pragma once
 
+#include "common.h"
 #include "packages.h"
-#include <stdint.h>
+#include "status.h"
+
+typedef enum
+{
+    LPM_TUI_MODE_NORMAL,
+    LPM_TUI_MODE_FILTER,
+} LPM_TUI_Mode;
 
 typedef struct
 {
@@ -30,7 +37,11 @@ typedef struct
 
     uint8_t footer_xpos; // X position of the footer text (column)
     uint8_t footer_ypos; // Y position of the footer text (row)
-} LPM_Layout;
+} LPM_TUI_Layout;
 
-void lpm_layout_setup(LPM_Layout *layout);
-void lpm_layout_teardown(LPM_Layout *layout);
+void lpm_tui_layout_setup(LPM_TUI_Layout *layout);
+void lpm_tui_layout_teardown(LPM_TUI_Layout *layout);
+
+void lpm_tui_run(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
+uint8_t lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout, LPM_Packages *pkgs);
+void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs);

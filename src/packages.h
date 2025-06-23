@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
+#include "common.h"
+#include "status.h"
+#include <ctype.h>
 
 #define LPM_PACKAGE_STATUS_INSTALLED "[*]"
 #define LPM_PACKAGE_STATUS_AVAILABLE "[-]"

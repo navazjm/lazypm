@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "termbox2.h"
+#include "external/termbox2.h"
 #include <errno.h>
 #include <stdarg.h>
 #include <stdbool.h>

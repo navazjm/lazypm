@@ -6,9 +6,6 @@
 //
 
 #include "packages.h"
-#include "common.h"
-#include "status.h"
-#include <ctype.h>
 
 void lpm_packages_teardown(LPM_Packages *pkgs)
 {

@@ -21,16 +21,16 @@ Planned and in-progress work for upcoming versions of `lazypm`.
 - [ ] 0.1.0 Core MVP
     - [x] Display packages
     - [x] Status messages
-    - [X] Log debug info to a file.
+    - [x] Log debug info to a file.
     - [x] Install/update selected package
     - [x] Update all packages
-    - [ ] Uninstall selected package
-    - [ ] Filter packages
-        - [ ] need separate event handler to handle keypresses
+    - [x] Uninstall selected package
+    - [x] Filter packages
     - [ ] Show depedencies
       - [ ] Modal to list depedencies
     - [ ] Show ? (keybindings)
       - [ ] Modal to list all keybindings
+    - [ ] Capture error when xbps itself needs an update.
 
 ### Planned
 

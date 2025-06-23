@@ -30,11 +30,15 @@ int main(int argc, char **argv)
         if (strcmp(temp_file_name, "..") == 0)
             continue;
 
+        const char *temp_full_path = nob_temp_sprintf("%s%s", SRC_FOLDER, temp_file_name);
+        if (nob_get_file_type(temp_full_path) == NOB_FILE_DIRECTORY)
+            continue;
+
         int len = strlen(temp_file_name);
         const char *file_ext = &temp_file_name[len - 2];
         if (strcmp(file_ext, ".h") == 0)
             continue;
-        nob_cmd_append(&cmd, nob_temp_sprintf("%s%s", SRC_FOLDER, temp_file_name));
+        nob_cmd_append(&cmd, temp_full_path);
     }
 
     nob_cmd_append(&cmd, "-o", BUILD_FOLDER "lazypm");
