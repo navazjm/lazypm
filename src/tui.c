@@ -57,7 +57,8 @@ void lpm_tui_run(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
     }
 }
 
-uint8_t lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout, LPM_Packages *pkgs)
+LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout,
+                                    LPM_Packages *pkgs)
 {
     if (lpm_tui_mode == LPM_TUI_MODE_FILTER)
     {

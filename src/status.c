@@ -24,7 +24,7 @@ typedef struct
 static LPM_Status_Msg _status = {
     .msg = NULL, .type = LPM_STATUS_MSG_TYPE_INACTIVE, .xpos = 0, .ypos = 0};
 
-static void _lpm_status_msg_teardown()
+static void _lpm_status_msg_teardown(void)
 {
     LPM_FREE(_status.msg);
     _status.msg = NULL;

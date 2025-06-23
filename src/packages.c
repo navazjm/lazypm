@@ -26,8 +26,8 @@ void lpm_packages_teardown(LPM_Packages *pkgs)
 
 typedef void (*LPM_Packages_Parse_Line_Callback)(char *line, void *data);
 
-static uint8_t _lpm_packages_run_cmd(const char *cmd, LPM_Packages_Parse_Line_Callback callback,
-                                     void *data)
+static LPM_Exit_Code _lpm_packages_run_cmd(const char *cmd,
+                                           LPM_Packages_Parse_Line_Callback callback, void *data)
 {
     uint8_t result = LPM_OK;
     FILE *fp = NULL;
@@ -111,7 +111,7 @@ static void _lpm_packages_get_callback(char *line, void *data)
     LPM_DA_APPEND(pkgs, pkg);
 }
 
-uint8_t lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
+LPM_Exit_Code lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
 {
     // pkg_name NULL -> pass empty string to get all packages
     char *cmd;
@@ -139,7 +139,7 @@ uint8_t lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
     return LPM_ERROR;
 }
 
-uint8_t lpm_packages_install(LPM_Package *pkg)
+LPM_Exit_Code lpm_packages_install(LPM_Package *pkg)
 {
     if (pkg == NULL || pkg->name == NULL)
         return LPM_ERROR;
@@ -181,7 +181,7 @@ uint8_t lpm_packages_install(LPM_Package *pkg)
     return result;
 }
 
-uint8_t lpm_packages_update_all()
+LPM_Exit_Code lpm_packages_update_all(void)
 {
     char *cmd = "sudo xbps-install -Syu 2>&1";
     uint8_t result = _lpm_packages_run_cmd(cmd, NULL, NULL);
@@ -205,9 +205,8 @@ uint8_t lpm_packages_update_all()
     return result;
 }
 
-uint8_t lpm_packages_uninstall(LPM_Package *pkg)
+LPM_Exit_Code lpm_packages_uninstall(LPM_Package *pkg)
 {
-
     char *cmd;
     lpm_asprintf(&cmd, "sudo xbps-remove -yo '%s' 2>&1", pkg->name);
     uint8_t result = _lpm_packages_run_cmd(cmd, NULL, NULL);

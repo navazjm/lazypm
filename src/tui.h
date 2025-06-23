@@ -43,5 +43,6 @@ void lpm_tui_layout_setup(LPM_TUI_Layout *layout);
 void lpm_tui_layout_teardown(LPM_TUI_Layout *layout);
 
 void lpm_tui_run(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
-uint8_t lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout, LPM_Packages *pkgs);
+LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout,
+                                    LPM_Packages *pkgs);
 void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
