@@ -95,17 +95,16 @@ void _lpm_log(LPM_Log_Level level, const char *file, int line, const char *fmt, 
     // Append to session log buffer
     if (_log_buffer == NULL)
     {
-        _log_buffer = strdup(log_entry);
-        LPM_ASSERT(_log_buffer != NULL && "failed to initialize log_buffer");
+        _log_buffer = LPM_STRDUP(log_entry);
     }
     else
     {
         char *old_buffer = _log_buffer;
         lpm_asprintf(&_log_buffer, "%s%s", old_buffer, log_entry);
-        free(old_buffer);
+        LPM_FREE(old_buffer);
     }
 
     // Cleanup
-    free(user_message);
-    free(log_entry);
+    LPM_FREE(user_message);
+    LPM_FREE(log_entry);
 }
