@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 {
     NOB_GO_REBUILD_URSELF(argc, argv);
 
-    nob_log(NOB_INFO, "--- Starting build ------------------------------------");
+    nob_log(NOB_INFO, "--- Starting build -------------------------------------");
 
     Nob_Cmd cmd = {0};
     nob_cmd_append(&cmd, "cc", "-Wall", "-Wextra");
@@ -45,6 +45,6 @@ int main(int argc, char **argv)
     if (!nob_cmd_run_sync_and_reset(&cmd))
         return 1;
 
-    nob_log(NOB_INFO, "--- Build complete ------------------------------------");
+    nob_log(NOB_INFO, "--- Build complete -------------------------------------");
     return 0;
 }
