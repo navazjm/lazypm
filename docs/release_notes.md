@@ -9,7 +9,7 @@ All notable changes are documented in this section.
 ### [Unreleased]
 - N/A 
 
-### [0.1.0] - 2025-06-DD
+### [0.1.0] - 2025-07-DD
 - Core MVP
 
 ## Roadmap
@@ -48,6 +48,10 @@ Planned and in-progress work for upcoming versions of `lazypm`.
   - Example: by default, lazypm runs `xbps-install -Syu ...`, allow for user to change
 `-Syu`
 - [ ] Support `xbps-src`??
+- [ ] Command line flags
+  - **lazypm**: run tui 
+  - **lazypm -v**: run tui with verbose logging
+  - **lazypm --log-level=<level>**: suppress log levels below the passed in value 
 
 ## Conventions
 
