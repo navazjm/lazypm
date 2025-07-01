@@ -6,6 +6,8 @@
 //
 
 #define TB_IMPL
+#define MIN_WIDTH 80
+#define MIN_HEIGHT 15
 
 #include "tui.h"
 
@@ -16,6 +18,21 @@ int main(void)
     {
         LPM_LOG_ERROR("Failed to initialized termbox2\n\tReason  : %s\n", tb_strerror(error));
         return error;
+    }
+
+    if (tb_width() < MIN_WIDTH)
+    {
+        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Width %d < %d\n", tb_width(),
+                      MIN_WIDTH);
+        tb_shutdown();
+        return LPM_ERROR;
+    }
+    if (tb_height() < MIN_HEIGHT)
+    {
+        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Height %d < %d\n", tb_height(),
+                      MIN_HEIGHT);
+        tb_shutdown();
+        return LPM_ERROR;
     }
 
     LPM_TUI_Layout layout = {0};
