@@ -62,7 +62,7 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
 {
     if (lpm_tui_mode == LPM_TUI_MODE_FILTER)
     {
-        size_t filter_text_len = LPM_STRLEN(filter_text);
+        size_t filter_text_len = strlen(filter_text);
 
         switch (evt->type)
         {
@@ -118,7 +118,7 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
             }
             else if (evt->key == TB_KEY_CTRL_U && filter_cursor_pos > 0)
             {
-                size_t tail_len = LPM_STRLEN(filter_text + filter_cursor_pos);
+                size_t tail_len = strlen(filter_text + filter_cursor_pos);
                 // Move the tail to the beginning,includes null terminator
                 memmove(filter_text, filter_text + filter_cursor_pos, tail_len + 1);
                 // Clear the rest of the buffer after new end
@@ -281,7 +281,7 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
         header_text = " LAZYPM ";
         tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM,
                   LPM_BG_COLOR_HIGHLIGHT, header_text);
-        lpm_status_msg_set_position(layout->header_xpos + LPM_STRLEN(header_text) + 1,
+        lpm_status_msg_set_position(layout->header_xpos + strlen(header_text) + 1,
                                     layout->header_ypos);
     }
     else if (lpm_tui_mode == LPM_TUI_MODE_FILTER)
@@ -289,16 +289,16 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
         header_text = " FILTER ";
         tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM,
                   LPM_BG_COLOR_HIGHLIGHT_FILTER, header_text);
-        tb_printf(layout->header_xpos + LPM_STRLEN(header_text) + 1, layout->header_ypos,
-                  LPM_FG_COLOR, LPM_BG_COLOR, filter_text);
+        tb_printf(layout->header_xpos + strlen(header_text) + 1, layout->header_ypos, LPM_FG_COLOR,
+                  LPM_BG_COLOR, filter_text);
         if (filter_cursor)
         {
-            tb_set_cell(layout->header_xpos + LPM_STRLEN(header_text) + 1 + filter_cursor_pos,
+            tb_set_cell(layout->header_xpos + strlen(header_text) + 1 + filter_cursor_pos,
                         layout->header_ypos, ' ', LPM_FG_COLOR_BLACK_DIM,
                         LPM_BG_COLOR_HIGHLIGHT_FILTER);
         }
         filter_cursor = filter_cursor_render_count++ % 20 < 10;
-        lpm_status_msg_set_position(layout->header_xpos + LPM_STRLEN(header_text) + 1 +
+        lpm_status_msg_set_position(layout->header_xpos + strlen(header_text) + 1 +
                                         strlen(filter_text) + 3,
                                     layout->header_ypos);
     }
@@ -333,8 +333,8 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
     {
         size_t idx = layout->packages_page_index * layout->packages_render_capacity + i;
         LPM_Package pkg = pkgs->items[idx];
-        if (LPM_STRLEN(pkg.name) > longest_package_name_len)
-            longest_package_name_len = LPM_STRLEN(pkg.name);
+        if (strlen(pkg.name) > longest_package_name_len)
+            longest_package_name_len = strlen(pkg.name);
     }
     for (size_t i = 0; i < layout->packages_render_capacity; ++i)
     {
@@ -345,7 +345,7 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
         lpm_asprintf(&temp, "%s %-*s %s", pkgs->items[idx].status, longest_package_name_len,
                      pkgs->items[idx].name, pkgs->items[idx].description);
 
-        temp_len = LPM_STRLEN(temp);
+        temp_len = strlen(temp);
         if (temp_len >= max_line_len)
         {
             temp[max_line_len - 3] = '.';
@@ -381,32 +381,32 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
         LPM_FREE(temp);
     lpm_asprintf(&temp, "Page %zu of %zu (%zu) | ", layout->packages_page_index + 1,
                  layout->packages_total_pages, pkgs->count);
-    temp_len = LPM_STRLEN(temp);
+    temp_len = strlen(temp);
 
     tb_printf(layout->footer_xpos, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, temp);
     LPM_FREE(temp);
 
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
               "/k");
-    temp_len += LPM_STRLEN("/k") - 1;
+    temp_len += strlen("/k") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM,
               LPM_BG_COLOR, "up ");
-    temp_len += LPM_STRLEN("up ") - 1;
+    temp_len += strlen("up ") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
               "/j");
-    temp_len += LPM_STRLEN("/j") - 1;
+    temp_len += strlen("/j") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM,
               LPM_BG_COLOR, "down ");
-    temp_len += LPM_STRLEN("down ") - 1;
+    temp_len += strlen("down ") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
               "/l");
-    temp_len += LPM_STRLEN("/l") - 1;
+    temp_len += strlen("/l") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM,
               LPM_BG_COLOR, "next ");
-    temp_len += LPM_STRLEN("next ") - 1;
+    temp_len += strlen("next ") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
               "/h");
-    temp_len += LPM_STRLEN("/h") - 1;
+    temp_len += strlen("/h") - 1;
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM,
               LPM_BG_COLOR, "previous");
     temp_len = 0;
@@ -419,44 +419,44 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
     {
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
                   "enter");
-        temp_len += LPM_STRLEN("enter");
+        temp_len += strlen("enter");
         if (strcmp(pkgs->items[curr_selected_pkg_idx].status, LPM_PACKAGE_STATUS_INSTALLED) == 0)
         {
             tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM,
                       LPM_BG_COLOR, " update ");
-            temp_len += LPM_STRLEN(" update ") - 1;
+            temp_len += strlen(" update ") - 1;
             tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
                       "x");
-            temp_len += LPM_STRLEN("x");
+            temp_len += strlen("x");
             tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM,
                       LPM_BG_COLOR, " uinstall ");
-            temp_len += LPM_STRLEN(" uinstall ") - 1;
+            temp_len += strlen(" uinstall ") - 1;
         }
         else
         {
             // keybindings = "enter install ";
             tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM,
                       LPM_BG_COLOR, " install ");
-            temp_len += LPM_STRLEN(" install ") - 1;
+            temp_len += strlen(" install ") - 1;
         }
 
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "u");
-        temp_len += LPM_STRLEN("u");
+        temp_len += strlen("u");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " update all ");
-        temp_len += LPM_STRLEN(" update all ") - 1;
+        temp_len += strlen(" update all ") - 1;
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "d");
-        temp_len += LPM_STRLEN("d");
+        temp_len += strlen("d");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " dependencies ");
-        temp_len += LPM_STRLEN(" dependencies ") - 1;
+        temp_len += strlen(" dependencies ") - 1;
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/");
-        temp_len += LPM_STRLEN("/");
+        temp_len += strlen("/");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " filter ");
-        temp_len += LPM_STRLEN(" filter ") - 1;
+        temp_len += strlen(" filter ") - 1;
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "q");
-        temp_len += LPM_STRLEN("q");
+        temp_len += strlen("q");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " quit");
         temp_len = 0;
@@ -465,13 +465,13 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
     {
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
                   "enter");
-        temp_len += LPM_STRLEN("enter");
+        temp_len += strlen("enter");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " query ");
-        temp_len += LPM_STRLEN(" query ") - 1;
+        temp_len += strlen(" query ") - 1;
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
                   "esc");
-        temp_len += LPM_STRLEN("esc");
+        temp_len += strlen("esc");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " cancel");
     }

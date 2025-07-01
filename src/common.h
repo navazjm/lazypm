@@ -59,11 +59,6 @@
         }                                                                                          \
     } while (0)
 
-#ifndef LPM_STRLEN
-#include <string.h>
-#define LPM_STRLEN strlen
-#endif // LPM_STRLEN
-
 #ifndef LPM_STRDUP
 #include <string.h>
 #define LPM_STRDUP strdup
