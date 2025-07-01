@@ -24,9 +24,19 @@ char *lpm_log_level_str(LPM_Log_Level log_level)
 
 static char *_log_buffer = {0};
 
-char *lpm_log_get_buffer()
+void lpm_log_dump_session()
 {
-    return _log_buffer;
+    if (_log_buffer)
+    {
+        fprintf(stderr, "%s --- Lazypm Logs ----------------------------------------\n",
+                lpm_log_level_str(LPM_LOG_LEVEL_INFO));
+        fprintf(stderr, "%s", _log_buffer);
+        char *path = lpm_log_file_path();
+        fprintf(stderr, "%s Full log: %s\n", lpm_log_level_str(LPM_LOG_LEVEL_INFO), path);
+        LPM_FREE(path);
+        fprintf(stderr, "%s --- End Lazypm -----------------------------------------\n",
+                lpm_log_level_str(LPM_LOG_LEVEL_INFO));
+    }
 }
 
 char *lpm_log_file_path()

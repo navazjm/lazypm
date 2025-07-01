@@ -18,22 +18,25 @@ int main(void)
     int error = tb_init();
     if (error)
     {
-        LPM_LOG_ERROR("Failed to initialized termbox2\n\tReason  : %s\n", tb_strerror(error));
+        LPM_LOG_ERROR("Failed to initialized termbox2\n\tReason  : %s", tb_strerror(error));
+        lpm_log_dump_session();
         return error;
     }
 
     if (tb_width() < MIN_WIDTH)
     {
-        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Width %d < %d\n", tb_width(),
+        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Width %d < %d", tb_width(),
                       MIN_WIDTH);
         tb_shutdown();
+        lpm_log_dump_session();
         return LPM_ERROR;
     }
     if (tb_height() < MIN_HEIGHT)
     {
-        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Height %d < %d\n", tb_height(),
+        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Height %d < %d", tb_height(),
                       MIN_HEIGHT);
         tb_shutdown();
+        lpm_log_dump_session();
         return LPM_ERROR;
     }
 
@@ -49,6 +52,7 @@ int main(void)
     tb_shutdown();
     lpm_tui_layout_teardown(&layout);
     lpm_packages_teardown(&pkgs);
+    lpm_log_dump_session();
 
     return error;
 }
