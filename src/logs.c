@@ -80,7 +80,7 @@ void _lpm_log(LPM_Log_Level level, const char *file, int line, const char *fmt, 
     char *user_message;
     va_list args;
     va_start(args, fmt);
-    lpm_asprintf(&user_message, fmt, args);
+    lpm_vasprintf(&user_message, fmt, args);
     va_end(args);
     // Build complete log entry
     char *log_entry;

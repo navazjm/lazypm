@@ -123,6 +123,14 @@ static inline int lpm_asprintf(char **strp, const char *fmt, ...)
     return ret;
 }
 
+static inline int lpm_vasprintf(char **strp, const char *fmt, va_list args)
+{
+    int ret = LPM_VASPRINTF(strp, fmt, args);
+    if (ret == -1)
+        LPM_ASSERT(0 && "lmp_vasprintf: Out of memory");
+    return ret;
+}
+
 //
 // Color scheme
 //
