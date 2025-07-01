@@ -487,9 +487,18 @@ void lpm_tui_crash_handler(int sig)
 {
     tb_shutdown();
 
-    char *path = lpm_log_file_path();
-    fprintf(stderr, "[INFO] Full log: %s\n", path);
-    LPM_FREE(path);
+    char *log_buffer = lpm_log_get_buffer();
+    if (log_buffer)
+    {
+        fprintf(stderr, "%s --- Lazypm Logs ----------------------------------------\n",
+                lpm_log_level_str(LPM_LOG_LEVEL_INFO));
+        fprintf(stderr, "%s", log_buffer);
+        char *path = lpm_log_file_path();
+        fprintf(stderr, "%s Full log: %s\n", lpm_log_level_str(LPM_LOG_LEVEL_INFO), path);
+        LPM_FREE(path);
+        fprintf(stderr, "%s --- End Lazypm -----------------------------------------\n",
+                lpm_log_level_str(LPM_LOG_LEVEL_INFO));
+    }
 
     signal(sig, SIG_DFL);
     raise(sig);

@@ -14,7 +14,9 @@ typedef enum
     LPM_LOG_LEVEL_ERROR,
 
 } LPM_Log_Level;
+char *lpm_log_level_str(LPM_Log_Level log_level);
 
+char *lpm_log_get_buffer();
 char *lpm_log_file_path();
 
 void _lpm_log(LPM_Log_Level level, const char *file, int line, const char *fmt, ...);

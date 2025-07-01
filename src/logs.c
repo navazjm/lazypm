@@ -7,6 +7,28 @@
 
 #include "logs.h"
 
+char *lpm_log_level_str(LPM_Log_Level log_level)
+{
+    switch (log_level)
+    {
+    case LPM_LOG_LEVEL_INFO:
+        return "[INFO]";
+    case LPM_LOG_LEVEL_WARNING:
+        return "[WARN]";
+    case LPM_LOG_LEVEL_ERROR:
+        return "[ERROR]";
+    default:
+        LPM_UNREACHABLE("lpm_log");
+    }
+}
+
+static char *_log_buffer = {0};
+
+char *lpm_log_get_buffer()
+{
+    return _log_buffer;
+}
+
 char *lpm_log_file_path()
 {
     const char *xdg_state_home = getenv("XDG_STATE_HOME");
@@ -51,30 +73,39 @@ void _lpm_log(LPM_Log_Level level, const char *file, int line, const char *fmt, 
     struct tm *tm_info = localtime(&now);
     char time_buf[16];
     strftime(time_buf, sizeof(time_buf), "%H:%M:%S", tm_info);
-    fprintf(fd, "[%s ", time_buf);
 
-    switch (level)
-    {
-    case LPM_LOG_LEVEL_INFO:
-        fprintf(fd, "- INFO]\n");
-        break;
-    case LPM_LOG_LEVEL_WARNING:
-        fprintf(fd, "- WARNING]\n");
-        break;
-    case LPM_LOG_LEVEL_ERROR:
-        fprintf(fd, "- ERROR]\n");
-        break;
-    default:
-        LPM_UNREACHABLE("lpm_log");
-    }
+    const char *level_str = lpm_log_level_str(level);
 
+    // Format the user message first
+    char *user_message;
     va_list args;
     va_start(args, fmt);
-    fprintf(fd, "\tMessage : ");
-    vfprintf(fd, fmt, args);
+    lpm_asprintf(&user_message, fmt, args);
     va_end(args);
-    fprintf(fd, "\tSource  : %s:%d\n\n", file, line);
+    // Build complete log entry
+    char *log_entry;
+    lpm_asprintf(&log_entry, "%-7s %s\n\tMessage : %s\n\tSource  : %s:%d\n", level_str, time_buf,
+                 user_message, file, line);
 
+    // Write to file
+    fprintf(fd, "%s", log_entry);
     if (fclose(fd) == EOF)
         LPM_ASSERT(0 && "Failed to close log file");
+
+    // Append to session log buffer
+    if (_log_buffer == NULL)
+    {
+        _log_buffer = strdup(log_entry);
+        LPM_ASSERT(_log_buffer != NULL && "failed to initialize log_buffer");
+    }
+    else
+    {
+        char *old_buffer = _log_buffer;
+        lpm_asprintf(&_log_buffer, "%s%s", old_buffer, log_entry);
+        free(old_buffer);
+    }
+
+    // Cleanup
+    free(user_message);
+    free(log_entry);
 }
