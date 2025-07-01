@@ -27,7 +27,6 @@ static LPM_Status_Msg _status = {
 static void _lpm_status_msg_teardown(void)
 {
     LPM_FREE(_status.msg);
-    _status.msg = NULL;
     _status.type = LPM_STATUS_MSG_TYPE_INACTIVE;
     _status.xpos = 0;
     _status.ypos = 0;

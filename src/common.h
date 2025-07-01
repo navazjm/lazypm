@@ -46,8 +46,18 @@
 
 #ifndef LPM_FREE
 #include <stdlib.h>
-#define LPM_FREE free
+#define _LPM_FREE free
 #endif // LPM_FREE
+
+#define LPM_FREE(ptr)                                                                              \
+    do                                                                                             \
+    {                                                                                              \
+        if (ptr)                                                                                   \
+        {                                                                                          \
+            _LPM_FREE(ptr);                                                                        \
+            (ptr) = NULL;                                                                          \
+        }                                                                                          \
+    } while (0)
 
 #ifndef LPM_STRLEN
 #include <string.h>

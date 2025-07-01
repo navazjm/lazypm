@@ -370,7 +370,6 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
                       temp);
         }
         LPM_FREE(temp);
-        temp = NULL;
         layout->packages_ypos++;
     }
 
@@ -386,7 +385,6 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
 
     tb_printf(layout->footer_xpos, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR, temp);
     LPM_FREE(temp);
-    temp = NULL;
 
     tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
               "/k");

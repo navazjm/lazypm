@@ -12,14 +12,10 @@ void lpm_packages_teardown(LPM_Packages *pkgs)
     for (size_t i = 0; i < pkgs->count; ++i)
     {
         LPM_FREE(pkgs->items[i].status);
-        pkgs->items[i].status = NULL;
         LPM_FREE(pkgs->items[i].name);
-        pkgs->items[i].name = NULL;
         LPM_FREE(pkgs->items[i].description);
-        pkgs->items[i].description = NULL;
     }
     LPM_FREE(pkgs->items);
-    pkgs->items = NULL;
     pkgs->capacity = 0;
     pkgs->count = 0;
 }
