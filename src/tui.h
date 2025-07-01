@@ -45,3 +45,6 @@ void lpm_tui_run(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
 LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout,
                                     LPM_Packages *pkgs);
 void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
+
+void lpm_tui_crash_handler(int sig);
+void lpm_tui_crash_signals();

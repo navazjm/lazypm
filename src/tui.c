@@ -482,3 +482,28 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
         LPM_UNREACHABLE("lpm_display set footer based on tui mode");
     }
 }
+
+void lpm_tui_crash_handler(int sig)
+{
+    tb_shutdown();
+
+    char *path = lpm_log_file_path();
+    fprintf(stderr, "[INFO] Full log: %s\n", path);
+    LPM_FREE(path);
+
+    signal(sig, SIG_DFL);
+    raise(sig);
+}
+
+void lpm_tui_crash_signals()
+{
+    signal(SIGSEGV, lpm_tui_crash_handler);
+    signal(SIGABRT, lpm_tui_crash_handler);
+    signal(SIGFPE, lpm_tui_crash_handler);
+    signal(SIGILL, lpm_tui_crash_handler);
+    signal(SIGBUS, lpm_tui_crash_handler);
+    signal(SIGINT, lpm_tui_crash_handler); // User interruption
+    signal(SIGTERM, lpm_tui_crash_handler);
+    signal(SIGPIPE, lpm_tui_crash_handler); // Pipe-related (important for popen!)
+    signal(SIGCHLD, SIG_DFL);               // Child process signals (may be useful)
+}

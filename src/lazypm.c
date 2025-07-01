@@ -13,6 +13,8 @@
 
 int main(void)
 {
+    lpm_tui_crash_signals();
+
     int error = tb_init();
     if (error)
     {
