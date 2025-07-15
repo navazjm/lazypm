@@ -10,6 +10,9 @@
 #include "common.h"
 #include "packages.h"
 
+#define MIN_WIDTH 80
+#define MIN_HEIGHT 15
+
 typedef enum
 {
     LPM_TUI_MODE_NORMAL,
@@ -40,6 +43,9 @@ typedef struct
 
 void lpm_tui_layout_setup(LPM_TUI_Layout *layout);
 void lpm_tui_layout_teardown(LPM_TUI_Layout *layout);
+
+LPM_Exit_Code lpm_tui_setup(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
+void lpm_tui_teardown(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
 
 void lpm_tui_run(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
 LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout,

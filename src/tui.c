@@ -37,6 +37,41 @@ void lpm_tui_layout_teardown(LPM_TUI_Layout *layout)
     (void)layout;
 }
 
+LPM_Exit_Code lpm_tui_setup(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
+{
+    int result = tb_init();
+    if (result)
+    {
+        LPM_LOG_ERROR("Failed to initialized termbox2\n\tReason  : %s", tb_strerror(result));
+        return LPM_ERROR_TB_INIT;
+    }
+
+    if (tb_width() < MIN_WIDTH)
+    {
+        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Width %d < %d", tb_width(),
+                      MIN_WIDTH);
+        return LPM_ERROR;
+    }
+    if (tb_height() < MIN_HEIGHT)
+    {
+        LPM_LOG_ERROR("Terminal dimensions too small\n\tReason  : Height %d < %d", tb_height(),
+                      MIN_HEIGHT);
+        return LPM_ERROR;
+    }
+
+    lpm_tui_layout_setup(layout);
+    result = lpm_packages_get(pkgs, NULL);
+    return result;
+}
+
+void lpm_tui_teardown(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
+{
+    tb_shutdown();
+    lpm_tui_layout_teardown(layout);
+    lpm_packages_teardown(pkgs);
+    lpm_log_dump_session();
+}
+
 void lpm_tui_run(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
 {
     int timeout_ms = 50; // how long to wait for an event to be triggered
