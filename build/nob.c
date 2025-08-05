@@ -16,6 +16,21 @@ int main(int argc, char **argv)
     nob_log(NOB_INFO, "--- Starting build -------------------------------------");
 
     Nob_Cmd cmd = {0};
+    bool install_lazypm = false;
+
+    while (argc > 1)
+    {
+        char *flag = argv[1];
+        if (strcmp(flag, "--install") == 0 || strcmp(flag, "-i") == 0)
+        {
+            install_lazypm = true;
+        }
+        else
+        {
+            nob_log(NOB_WARNING, "Unknown flag: \"%s\"", flag);
+        }
+        nob_shift_args(&argc, &argv);
+    }
     nob_cmd_append(&cmd, "cc", "-Wall", "-Wextra");
 
     Nob_File_Paths src_files = {0};
@@ -44,6 +59,17 @@ int main(int argc, char **argv)
     nob_cmd_append(&cmd, "-o", BUILD_FOLDER "lazypm");
     if (!nob_cmd_run_sync_and_reset(&cmd))
         return 1;
+    // move build/lazypm to /usr/local/bin if user passes in --install flag
+    if (install_lazypm)
+    {
+        char *install_path = "/usr/local/bin";
+        char *rmbrl_exe = BUILD_FOLDER "lazypm";
+        nob_cmd_append(&cmd, "sudo", "cp", rmbrl_exe, install_path);
+        if (!nob_cmd_run_sync_and_reset(&cmd))
+        {
+            return 1;
+        }
+    }
 
     nob_log(NOB_INFO, "--- Build complete -------------------------------------");
     return 0;
