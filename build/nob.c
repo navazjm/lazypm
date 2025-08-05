@@ -9,11 +9,14 @@
 #define BUILD_FOLDER "build/"
 #define SRC_FOLDER "src/"
 
+#define BUILD_FAILED_MSG                                                                           \
+    nob_log(NOB_ERROR, "--- Build failed --------------------------------------");
+
 int main(int argc, char **argv)
 {
     NOB_GO_REBUILD_URSELF(argc, argv);
 
-    nob_log(NOB_INFO, "--- Starting build -------------------------------------");
+    nob_log(NOB_INFO, "--- Build started --------------------------------------");
 
     Nob_Cmd cmd = {0};
     bool install_lazypm = false;
@@ -35,7 +38,10 @@ int main(int argc, char **argv)
 
     Nob_File_Paths src_files = {0};
     if (!nob_read_entire_dir(SRC_FOLDER, &src_files))
+    {
+        BUILD_FAILED_MSG
         return 1;
+    }
 
     for (size_t i = 0; i < src_files.count; ++i)
     {
@@ -58,7 +64,11 @@ int main(int argc, char **argv)
 
     nob_cmd_append(&cmd, "-o", BUILD_FOLDER "lazypm");
     if (!nob_cmd_run_sync_and_reset(&cmd))
+    {
+        BUILD_FAILED_MSG
         return 1;
+    }
+
     // move build/lazypm to /usr/local/bin if user passes in --install flag
     if (install_lazypm)
     {
@@ -67,10 +77,11 @@ int main(int argc, char **argv)
         nob_cmd_append(&cmd, "sudo", "cp", rmbrl_exe, install_path);
         if (!nob_cmd_run_sync_and_reset(&cmd))
         {
+            BUILD_FAILED_MSG
             return 1;
         }
     }
 
-    nob_log(NOB_INFO, "--- Build complete -------------------------------------");
+    nob_log(NOB_INFO, "--- Build succeeded ------------------------------------");
     return 0;
 }
