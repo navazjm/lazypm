@@ -26,8 +26,6 @@ Planned and in-progress work for upcoming versions of `lazypm`.
     - [x] Update all packages
     - [x] Uninstall selected package
     - [x] Filter packages
-    - [ ] Show depedencies
-      - [ ] Modal to list depedencies
     - [ ] Show ? (keybindings)
       - [ ] Modal to list all keybindings
     - [ ] Capture error when xbps itself needs an update.
@@ -36,6 +34,8 @@ Planned and in-progress work for upcoming versions of `lazypm`.
 
 - [ ] Modal to capture user password to run xbps-install and xbps-remove
   - For now, just run `sudo lazypm`
+- [ ] Keybinding to list depedencies of a package
+  - also show what packages depend on this package?
 
 ### Under Consideration
 
@@ -48,10 +48,6 @@ Planned and in-progress work for upcoming versions of `lazypm`.
   - Example: by default, lazypm runs `xbps-install -Syu ...`, allow for user to change
 `-Syu`
 - [ ] Support `xbps-src`??
-- [ ] Command line flags
-  - **lazypm**: run tui 
-  - **lazypm -v**: run tui with verbose logging
-  - **lazypm --log-level=<level>**: suppress log levels below the passed in value 
 
 ## Conventions
 
