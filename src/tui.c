@@ -475,21 +475,19 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
             temp_len += strlen(" install ") - 1;
         }
 
-        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "u");
-        temp_len += strlen("u");
-        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
-                  " update all ");
-        temp_len += strlen(" update all ") - 1;
-        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "d");
-        temp_len += strlen("d");
-        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
-                  " dependencies ");
-        temp_len += strlen(" dependencies ") - 1;
+        // ---
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "/");
         temp_len += strlen("/");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " filter ");
         temp_len += strlen(" filter ") - 1;
+        // ---
+        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "?");
+        temp_len += strlen("?");
+        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
+                  " more ");
+        temp_len += strlen(" more ") - 1;
+        // ---
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "q");
         temp_len += strlen("q");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
