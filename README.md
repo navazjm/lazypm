@@ -33,8 +33,8 @@ lazypm
 - TUI interface powered by [termbox2](https://github.com/termbox/termbox2)
 - Minimal dependencies, fast startup
 
-*(Coming soon!)*  
-[GIF or screenshot of the interface]
+![output](https://github.com/user-attachments/assets/4883d958-7bfa-42bf-9d77-1f56ba432aa0)
+
 
 ## Installation
 
