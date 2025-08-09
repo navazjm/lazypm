@@ -26,8 +26,7 @@ Planned and in-progress work for upcoming versions of `lazypm`.
     - [x] Update all packages
     - [x] Uninstall selected package
     - [x] Filter packages
-    - [ ] Show ? (keybindings)
-      - [ ] Modal to list all keybindings
+    - [x] Show list of all keybindings
     - [ ] Capture error when xbps itself needs an update.
 
 ### Planned
@@ -55,6 +54,4 @@ Planned and in-progress work for upcoming versions of `lazypm`.
 - Dates use `YYYY-MM-DD` format
 - Keep descriptions brief, clear, and action-based
 - Use checkboxes to track roadmap progress
-
-Last updated: 2025-06-13
 
