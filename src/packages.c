@@ -119,16 +119,16 @@ LPM_Exit_Code lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name)
     if (result == LPM_OK || result == LPM_ERROR_PIPE_CLOSE)
     {
         if (result == LPM_ERROR_PIPE_CLOSE)
-            lpm_status_msg_set_info("Query command succeeded but failed to close pipe stream.");
+            LPM_STATUS_MSG_SET_INFO("Query command succeeded but failed to close pipe stream.");
         return LPM_OK;
     }
 
     if (result == LPM_ERROR_PIPE_OPEN)
-        lpm_status_msg_set_error("Failed to open pipe stream to query package(s).");
+        LPM_STATUS_MSG_SET_ERROR("Failed to open pipe stream to query package(s).");
     else if (result == LPM_ERROR_FILE_READ)
-        lpm_status_msg_set_error("Failed to parse query results.");
+        LPM_STATUS_MSG_SET_ERROR("Failed to parse query results.");
     else if (result == LPM_ERROR_COMMAND_FAIL)
-        lpm_status_msg_set_error("Command failed to query package(s).");
+        LPM_STATUS_MSG_SET_ERROR("Command failed to query package(s).");
     else
         LPM_UNREACHABLE("lpm_packages_get error checking");
 
@@ -147,11 +147,11 @@ LPM_Exit_Code lpm_packages_install(LPM_Package *pkg)
     LPM_FREE(cmd);
 
     if (result == LPM_ERROR_PIPE_OPEN)
-        lpm_status_msg_set_error("Failed to open pipe stream to install package.");
+        LPM_STATUS_MSG_SET_ERROR("Failed to open pipe stream to install package.");
     else if (result == LPM_ERROR_FILE_READ)
-        lpm_status_msg_set_error("Failed to parse install results.");
+        LPM_STATUS_MSG_SET_ERROR("Failed to parse install results.");
     else if (result == LPM_ERROR_COMMAND_FAIL)
-        lpm_status_msg_set_error("Command failed to install package.");
+        LPM_STATUS_MSG_SET_ERROR("Command failed to install package.");
     else if (result == LPM_OK || result == LPM_ERROR_PIPE_CLOSE)
     {
         bool is_update = strcmp(pkg->status, LPM_PACKAGE_STATUS_INSTALLED) == 0;
@@ -165,11 +165,11 @@ LPM_Exit_Code lpm_packages_install(LPM_Package *pkg)
             if (is_update)
                 action = "updated";
             lpm_asprintf(&status_msg, "Package '%s' was %s successfully.", pkg->name, action);
-            lpm_status_msg_set_success(status_msg);
+            LPM_STATUS_MSG_SET_SUCCESS(status_msg);
             LPM_FREE(status_msg);
         }
         else
-            lpm_status_msg_set_info("Install command succeeded but failed to close pipe stream.");
+            LPM_STATUS_MSG_SET_INFO("Install command succeeded but failed to close pipe stream.");
     }
     else
         LPM_UNREACHABLE("lpm_packages_install error checking");
@@ -183,16 +183,16 @@ LPM_Exit_Code lpm_packages_update_all(void)
     uint8_t result = _lpm_packages_run_cmd(cmd, NULL, NULL);
 
     if (result == LPM_ERROR_PIPE_OPEN)
-        lpm_status_msg_set_error("Failed to open pipe stream to update all packages.");
+        LPM_STATUS_MSG_SET_ERROR("Failed to open pipe stream to update all packages.");
     else if (result == LPM_ERROR_FILE_READ)
-        lpm_status_msg_set_error("Failed to parse update results.");
+        LPM_STATUS_MSG_SET_ERROR("Failed to parse update results.");
     else if (result == LPM_ERROR_COMMAND_FAIL)
-        lpm_status_msg_set_error("Command failed to update all packages.");
+        LPM_STATUS_MSG_SET_ERROR("Command failed to update all packages.");
     else if (result == LPM_OK)
-        lpm_status_msg_set_success("Updated all packages successfully.");
+        LPM_STATUS_MSG_SET_SUCCESS("Updated all packages successfully.");
     else if (result == LPM_ERROR_PIPE_CLOSE)
     {
-        lpm_status_msg_set_info("Update command succeeded but failed to close pipe stream.");
+        LPM_STATUS_MSG_SET_INFO("Update command succeeded but failed to close pipe stream.");
         result = LPM_OK;
     }
     else
@@ -209,19 +209,19 @@ LPM_Exit_Code lpm_packages_uninstall(LPM_Package *pkg)
     LPM_FREE(cmd);
 
     if (result == LPM_ERROR_PIPE_OPEN)
-        lpm_status_msg_set_error("Failed to open pipe stream to uninstall package.");
+        LPM_STATUS_MSG_SET_ERROR("Failed to open pipe stream to uninstall package.");
     else if (result == LPM_ERROR_FILE_READ)
-        lpm_status_msg_set_error("Failed to parse uninstall results.");
+        LPM_STATUS_MSG_SET_ERROR("Failed to parse uninstall results.");
     else if (result == LPM_ERROR_COMMAND_FAIL)
-        lpm_status_msg_set_error("Command failed to uninstall package.");
+        LPM_STATUS_MSG_SET_ERROR("Command failed to uninstall package.");
     else if (result == LPM_OK || result == LPM_ERROR_PIPE_CLOSE)
     {
         LPM_FREE(pkg->status);
         pkg->status = LPM_STRDUP(LPM_PACKAGE_STATUS_AVAILABLE);
         if (result == LPM_OK)
-            lpm_status_msg_set_success("Uninstalled package successfully.");
+            LPM_STATUS_MSG_SET_SUCCESS("Uninstalled package successfully.");
         else
-            lpm_status_msg_set_info("Uninstall command succeeded but failed to close pipe stream.");
+            LPM_STATUS_MSG_SET_INFO("Uninstall command succeeded but failed to close pipe stream.");
         result = LPM_OK;
     }
     else

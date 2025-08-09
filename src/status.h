@@ -22,8 +22,8 @@ void lpm_status_msg_set_position(uint8_t xpos, uint8_t ypos);
 void lpm_status_msg_display(bool flush);
 
 void lpm_status_msg_set_and_display(LPM_Status_Msg_Type st, const char *msg);
-#define lpm_status_msg_set(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_DEFAULT, msg)
-#define lpm_status_msg_set_success(msg)                                                            \
+#define LPM_STATUS_MSG_SET(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_DEFAULT, msg)
+#define LPM_STATUS_MSG_SET_SUCCESS(msg)                                                            \
     lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_SUCCESS, msg)
-#define lpm_status_msg_set_error(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_ERROR, msg)
-#define lpm_status_msg_set_info(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_INFO, msg)
+#define LPM_STATUS_MSG_SET_ERROR(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_ERROR, msg)
+#define LPM_STATUS_MSG_SET_INFO(msg) lpm_status_msg_set_and_display(LPM_STATUS_MSG_TYPE_INFO, msg)

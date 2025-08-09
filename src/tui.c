@@ -125,11 +125,11 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
                     {
                         char *status_msg;
                         lpm_asprintf(&status_msg, "Showing results for '%s'", filter_text);
-                        lpm_status_msg_set(status_msg);
+                        LPM_STATUS_MSG_SET(status_msg);
                         LPM_FREE(status_msg);
                     }
                     else
-                        lpm_status_msg_set(NULL);
+                        LPM_STATUS_MSG_SET(NULL);
                 }
                 else
                 {
@@ -282,13 +282,13 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
                 lpm_asprintf(&status_msg, "Installing package '%s'... ", pkg->name);
             else
                 lpm_asprintf(&status_msg, "Updating package '%s'... ", pkg->name);
-            lpm_status_msg_set_info(status_msg);
+            LPM_STATUS_MSG_SET_INFO(status_msg);
             LPM_FREE(status_msg);
             lpm_packages_install(pkg);
         }
         else if (evt->ch == 'u')
         {
-            lpm_status_msg_set_info("Updating all installed packages. This may take a moment...");
+            LPM_STATUS_MSG_SET_INFO("Updating all installed packages. This may take a moment...");
             lpm_packages_update_all();
         }
         else if (evt->ch == 'x')
@@ -298,7 +298,7 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
             {
                 char *status_msg;
                 lpm_asprintf(&status_msg, "Uninstalling package '%s'... ", pkg->name);
-                lpm_status_msg_set_info(status_msg);
+                LPM_STATUS_MSG_SET_INFO(status_msg);
                 LPM_FREE(status_msg);
                 lpm_packages_uninstall(pkg);
             }
