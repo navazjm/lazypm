@@ -24,7 +24,7 @@ char *lpm_log_level_str(LPM_Log_Level log_level)
 
 static char *_log_buffer = {0};
 
-void lpm_log_dump_session()
+void lpm_log_dump_session(void)
 {
     if (_log_buffer)
     {
@@ -39,7 +39,7 @@ void lpm_log_dump_session()
     }
 }
 
-char *lpm_log_file_path()
+char *lpm_log_file_path(void)
 {
     const char *xdg_state_home = getenv("XDG_STATE_HOME");
     const char *home = getenv("HOME");

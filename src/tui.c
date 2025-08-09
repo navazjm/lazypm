@@ -640,7 +640,7 @@ void lpm_tui_crash_handler(int sig)
     raise(sig);
 }
 
-void lpm_tui_crash_signals()
+void lpm_tui_crash_signals(void)
 {
     signal(SIGSEGV, lpm_tui_crash_handler);
     signal(SIGABRT, lpm_tui_crash_handler);

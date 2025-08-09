@@ -55,4 +55,4 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
 void lpm_tui_display_keybindings_screen(LPM_TUI_Layout *layout);
 
 void lpm_tui_crash_handler(int sig);
-void lpm_tui_crash_signals();
+void lpm_tui_crash_signals(void);
