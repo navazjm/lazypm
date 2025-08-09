@@ -41,7 +41,7 @@ lazypm
 git clone https://github.com/navazjm/lazypm
 cd lazypm
 gcc ./build/nob.c -o ./build/nob
-./build/nob
+./build/nob --install
 ```
 
 ## Usage
