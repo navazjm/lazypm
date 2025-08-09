@@ -41,15 +41,24 @@ void lpm_log_dump_session(void)
 
 char *lpm_log_file_path(void)
 {
-    const char *xdg_state_home = getenv("XDG_STATE_HOME");
     const char *home = getenv("HOME");
-    LPM_ASSERT(home != NULL && "no home dir found...");
+    LPM_ASSERT(home != NULL && "$HOME not found...");
+    if (strncmp(home, "/root", 5) == 0)
+    {
+        const char *sudo_user = getenv("SUDO_USER");
+        LPM_ASSERT(home != NULL && "$SUDO_USER not found...");
+        // If running under sudo, try to get the real user's home
+        if (sudo_user && strcmp(sudo_user, "root") != 0)
+        {
+            // Get the original user's home directory
+            struct passwd *pw = getpwnam(sudo_user);
+            if (pw)
+                home = pw->pw_dir;
+        }
+    }
 
     char *base_path;
-    if (xdg_state_home)
-        lpm_asprintf(&base_path, "%s/lazypm", xdg_state_home);
-    else
-        lpm_asprintf(&base_path, "%s/.local/state/lazypm", home);
+    lpm_asprintf(&base_path, "%s/.local/state/lazypm", home);
 
     if (mkdir(base_path, 0755) == -1 && errno != EEXIST)
         LPM_ASSERT(0 && "Failed to create lazypm directory");

@@ -6,6 +6,7 @@
 //
 
 #include "common.h"
+#include <pwd.h>
 
 typedef enum
 {
