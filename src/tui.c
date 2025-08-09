@@ -39,7 +39,11 @@ void lpm_tui_layout_teardown(LPM_TUI_Layout *layout)
 
 LPM_Exit_Code lpm_tui_setup(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
 {
-    int result = tb_init();
+    int result = lpm_packages_update_xbps();
+    if (result != LPM_OK && result != LPM_ERROR_PIPE_CLOSE)
+        return result;
+
+    result = tb_init();
     if (result)
     {
         LPM_LOG_ERROR("Failed to initialized termbox2\n\tReason  : %s", tb_strerror(result));
@@ -58,10 +62,6 @@ LPM_Exit_Code lpm_tui_setup(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
                       MIN_HEIGHT);
         return LPM_ERROR;
     }
-
-    result = lpm_packages_update_xbps();
-    if (result != LPM_OK && result != LPM_ERROR_PIPE_CLOSE)
-        return result;
 
     lpm_tui_layout_setup(layout);
     result = lpm_packages_get(pkgs, NULL);
