@@ -229,3 +229,21 @@ LPM_Exit_Code lpm_packages_uninstall(LPM_Package *pkg)
 
     return result;
 }
+
+LPM_Exit_Code lpm_packages_update_xbps(void)
+{
+    uint8_t result = _lpm_packages_run_cmd("sudo xbps-install -u xbps 2>&1", NULL, NULL);
+    if (result == LPM_OK)
+        LPM_LOG_INFO("Xbps was updated successfully.");
+    else if (result == LPM_ERROR_PIPE_OPEN)
+        LPM_LOG_ERROR("Failed to open pipe stream to update xbps.");
+    else if (result == LPM_ERROR_FILE_READ)
+        LPM_LOG_ERROR("Failed to parse results after updating xbps.");
+    else if (result == LPM_ERROR_COMMAND_FAIL)
+        LPM_LOG_ERROR("Command failed to update xbps.");
+    else if (result == LPM_ERROR_PIPE_CLOSE)
+        LPM_LOG_INFO("Install command succeeded but failed to close pipe stream.");
+    else
+        LPM_UNREACHABLE("lpm_packages_update_xbps error checking");
+    return result;
+}

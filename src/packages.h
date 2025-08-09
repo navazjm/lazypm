@@ -33,3 +33,4 @@ LPM_Exit_Code lpm_packages_get(LPM_Packages *pkgs, const char *pkg_name);
 LPM_Exit_Code lpm_packages_install(LPM_Package *pkg);
 LPM_Exit_Code lpm_packages_update_all(void);
 LPM_Exit_Code lpm_packages_uninstall(LPM_Package *pkg);
+LPM_Exit_Code lpm_packages_update_xbps(void);

@@ -59,6 +59,10 @@ LPM_Exit_Code lpm_tui_setup(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
         return LPM_ERROR;
     }
 
+    result = lpm_packages_update_xbps();
+    if (result != LPM_OK && result != LPM_ERROR_PIPE_CLOSE)
+        return result;
+
     lpm_tui_layout_setup(layout);
     result = lpm_packages_get(pkgs, NULL);
     return result;
