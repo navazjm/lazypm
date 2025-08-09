@@ -558,7 +558,7 @@ void lpm_tui_display_keybindings_screen(LPM_TUI_Layout *layout)
     layout->packages_ypos = layout->header_ypos + 2;
 
     tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR,
-              "escape (ctrl+c) : Exit current mode. If in LAZYPM mode, terminate program");
+              "escape (ctrl + c) : Exit current mode. If in LAZYPM mode, terminate program");
 
     // Lazypm (Main) Mode keybindings
 
