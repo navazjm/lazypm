@@ -15,8 +15,9 @@
 
 typedef enum
 {
-    LPM_TUI_MODE_NORMAL,
+    LPM_TUI_MODE_MAIN,
     LPM_TUI_MODE_FILTER,
+    LPM_TUI_MODE_KEYBINDINGS,
 } LPM_TUI_Mode;
 
 typedef struct
@@ -51,6 +52,7 @@ void lpm_tui_run(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
 LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout,
                                     LPM_Packages *pkgs);
 void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs);
+void lpm_tui_display_keybindings_screen(LPM_TUI_Layout *layout);
 
 void lpm_tui_crash_handler(int sig);
 void lpm_tui_crash_signals();

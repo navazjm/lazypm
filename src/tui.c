@@ -7,7 +7,7 @@
 
 #include "tui.h"
 
-static LPM_TUI_Mode lpm_tui_mode = LPM_TUI_MODE_NORMAL;
+static LPM_TUI_Mode lpm_tui_mode = LPM_TUI_MODE_MAIN;
 #define FILTER_TEXT_MAX_LEN 64
 static char filter_text[FILTER_TEXT_MAX_LEN] = {0};
 static bool filter_cursor = false;
@@ -106,7 +106,7 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
                 ((evt->key == TB_KEY_BACKSPACE || evt->key == TB_KEY_BACKSPACE2) &&
                  filter_text_len == 0))
             {
-                lpm_tui_mode = LPM_TUI_MODE_NORMAL;
+                lpm_tui_mode = LPM_TUI_MODE_MAIN;
             }
             else if (evt->key == TB_KEY_ENTER)
             {
@@ -132,7 +132,7 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
                     lpm_packages_teardown(&new_pkgs);
                 }
 
-                lpm_tui_mode = LPM_TUI_MODE_NORMAL;
+                lpm_tui_mode = LPM_TUI_MODE_MAIN;
                 layout->packages_cursor_ypos = 0;
             }
             else if (evt->key == TB_KEY_ARROW_LEFT && filter_cursor_pos > 0)
@@ -196,6 +196,25 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
         }
         return LPM_OK;
     }
+    if (lpm_tui_mode == LPM_TUI_MODE_KEYBINDINGS)
+    {
+        switch (evt->type)
+        {
+        case TB_EVENT_KEY:
+            if (evt->key == TB_KEY_ESC || evt->key == TB_KEY_CTRL_C || evt->ch == 'q')
+            {
+                lpm_tui_mode = LPM_TUI_MODE_MAIN;
+            }
+            break;
+        case TB_EVENT_RESIZE:
+            break;
+        case TB_EVENT_MOUSE:
+            break;
+        default:
+            break;
+        }
+        return LPM_OK;
+    }
 
     size_t items_remaining =
         pkgs->count - layout->packages_page_index * layout->packages_render_capacity;
@@ -208,7 +227,7 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
     switch (evt->type)
     {
     case TB_EVENT_KEY:
-        if (evt->key == TB_KEY_ESC || evt->key == TB_KEY_CTRL_C || evt->ch == 'q')
+        if (evt->key == TB_KEY_ESC || evt->key == TB_KEY_CTRL_C)
             return LPM_QUIT;
 
         if (evt->ch == 'H') // go to first page
@@ -287,6 +306,10 @@ LPM_Exit_Code lpm_tui_event_handler(struct tb_event *evt, LPM_TUI_Layout *layout
             filter_cursor_pos = 0;
             memset(filter_text, 0, sizeof(filter_text));
         }
+        else if (evt->ch == '?')
+        {
+            lpm_tui_mode = LPM_TUI_MODE_KEYBINDINGS;
+        }
         break;
     case TB_EVENT_RESIZE:
         break;
@@ -302,6 +325,12 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
 {
     tb_clear();
 
+    if (lpm_tui_mode == LPM_TUI_MODE_KEYBINDINGS)
+    {
+        lpm_tui_display_keybindings_screen(layout);
+        return;
+    }
+
     // temp buffer to concatenate text together for displaying
     char *temp = NULL;
     size_t temp_len = 0;
@@ -311,7 +340,7 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
     //
 
     char *header_text;
-    if (lpm_tui_mode == LPM_TUI_MODE_NORMAL)
+    if (lpm_tui_mode == LPM_TUI_MODE_MAIN)
     {
         header_text = " LAZYPM ";
         tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM,
@@ -389,7 +418,7 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
             temp[max_line_len] = '\0';
         }
 
-        if (lpm_tui_mode == LPM_TUI_MODE_NORMAL && i == layout->packages_cursor_ypos)
+        if (lpm_tui_mode == LPM_TUI_MODE_MAIN && i == layout->packages_cursor_ypos)
         {
             tb_printf(layout->packages_xpos, layout->packages_ypos, LPM_FG_COLOR_BLACK_DIM,
                       LPM_BG_COLOR_HIGHLIGHT, temp);
@@ -450,7 +479,7 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
     size_t curr_selected_pkg_idx = layout->packages_page_index * layout->packages_render_capacity +
                                    layout->packages_cursor_ypos;
 
-    if (lpm_tui_mode == LPM_TUI_MODE_NORMAL)
+    if (lpm_tui_mode == LPM_TUI_MODE_MAIN)
     {
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
                   "enter");
@@ -488,8 +517,9 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
                   " more ");
         temp_len += strlen(" more ") - 1;
         // ---
-        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR, "q");
-        temp_len += strlen("q");
+        tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
+                  "esc");
+        temp_len += strlen("esc");
         tb_printf(layout->footer_xpos + temp_len, footer_ypos, LPM_FG_COLOR_BLACK_DIM, LPM_BG_COLOR,
                   " quit");
         temp_len = 0;
@@ -512,6 +542,90 @@ void lpm_tui_display(LPM_TUI_Layout *layout, LPM_Packages *pkgs)
     {
         LPM_UNREACHABLE("lpm_display set footer based on tui mode");
     }
+}
+
+void lpm_tui_display_keybindings_screen(LPM_TUI_Layout *layout)
+{
+    // temp buffer to concatenate text together for displaying
+    // char *temp = NULL;
+    size_t temp_len = 0;
+
+    char *header_text = " KEYBINDINGS ";
+    tb_printf(layout->header_xpos, layout->header_ypos, LPM_FG_COLOR_BLACK_DIM,
+              LPM_BG_COLOR_HIGHLIGHT_HELP, header_text);
+    lpm_status_msg_set_position(layout->header_xpos + strlen(header_text) + 1, layout->header_ypos);
+
+    layout->packages_ypos = layout->header_ypos + 2;
+
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR,
+              "escape (ctrl+c) : Exit current mode. If in LAZYPM mode, terminate program");
+
+    // Lazypm (Main) Mode keybindings
+
+    size_t longest_keybinding_strlen = strlen("enter");
+    layout->packages_ypos++;
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR_BLACK_DIM,
+              LPM_BG_COLOR_HIGHLIGHT, " LAZYPM ");
+    layout->packages_ypos++;
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "h ()", ": Go to previous page");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "l ()", ": Go to next page");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "j ()", ": Go to next package");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "k ()", ": Go to previous package");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "H", ": Go to first page of packages");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "L", ": Go to last page of packages");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "J", ": Go to first package of current page");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "K", ": Go to last package of current page");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "enter", ": install or update selected package");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "u", ": update all installed packages");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "x", ": uninstall selected package if installed already");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "/", ": enter filter mode");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "?", ": view list of all keybindings");
+
+    // Filter Mode keybindings
+
+    longest_keybinding_strlen = strlen("backspace");
+    layout->packages_ypos++;
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR_BLACK_DIM,
+              LPM_BG_COLOR_HIGHLIGHT_FILTER, " FILTER ");
+    layout->packages_ypos++;
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "enter", ": Query for packages with given input");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "        ", ": Move cursor left one position");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "        ", ": Move cursor right one position");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "ctrl + a", ": Mover cursor to the beginning of input");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "ctrl + e", ": Mover cursor to the end of input");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "ctrl + u",
+              ": Delete text from cursor position to the beginning of input");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "backspace", ": Delete character left of cursor position");
+    tb_printf(layout->packages_xpos, layout->packages_ypos++, LPM_FG_COLOR, LPM_BG_COLOR, "%-*s %s",
+              longest_keybinding_strlen, "delete", ": Delete character right of cursor position");
+
+    // Footer
+
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_DIM, LPM_BG_COLOR,
+              "esc");
+    temp_len += strlen("esc");
+    tb_printf(layout->footer_xpos + temp_len, layout->footer_ypos, LPM_FG_COLOR_BLACK_DIM,
+              LPM_BG_COLOR, " back");
 }
 
 void lpm_tui_crash_handler(int sig)

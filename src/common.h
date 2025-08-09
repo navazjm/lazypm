@@ -150,6 +150,7 @@ static inline int lpm_vasprintf(char **strp, const char *fmt, va_list args)
 #define LPM_BG_COLOR 0
 #define LPM_BG_COLOR_HIGHLIGHT TB_MAGENTA
 #define LPM_BG_COLOR_HIGHLIGHT_FILTER TB_BLUE
+#define LPM_BG_COLOR_HIGHLIGHT_HELP TB_GREEN
 
 //
 // Exit Codes
