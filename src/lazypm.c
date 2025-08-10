@@ -11,6 +11,15 @@
 
 int main(void)
 {
+    // until we implement feature to capture user's password, we will require users to
+    // run `sudo lazypm`...
+    if (getuid() != 0)
+    {
+        LPM_LOG_ERROR("lazypm requires root privileges to manage system packages.\n"
+                      "\t\t  Please run with sudo: sudo lazypm");
+        lpm_log_dump_session();
+        return LPM_ERROR;
+    }
     lpm_tui_crash_signals();
     LPM_TUI_Layout layout = {0};
     LPM_Packages pkgs = {0};

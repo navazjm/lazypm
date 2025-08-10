@@ -23,8 +23,10 @@ memorize flags or commands.
 1. Run lazypm
 
 ```sh
-lazypm
+sudo lazypm
 ```
+
+> lazypm requires root privileges to manage system packages.
 
 ## Features
 
@@ -46,8 +48,10 @@ gcc ./build/nob.c -o ./build/nob
 
 ## Usage
 
+> lazypm requires root privileges to manage system packages.
+
 ```sh
-lazypm
+sudo lazypm
 ```
 
 Navigate with arrow keys or hjkl. Press ? for help inside the UI.
