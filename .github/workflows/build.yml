@@ -5,21 +5,15 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-        container:
-            image: voidlinux/voidlinux:latest
         
         steps:
-        - name: Install essential dependencies
-          run: |
-              xbps-install -Syu xbps
-              xbps-install -y libstdc++ glibc-devel
-              
         - name: Checkout code
           uses: actions/checkout@v4
           
         - name: Install build dependencies
           run: |
-              xbps-install -y gcc base-devel
+              sudo apt-get update
+              sudo apt-get install -y gcc build-essential
               
         - name: Build nob
           run: gcc ./build/nob.c -o ./build/nob
