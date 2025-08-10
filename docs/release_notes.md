@@ -9,8 +9,17 @@ All notable changes are documented in this section.
 ### [Unreleased]
 - N/A 
 
-### [0.1.0] - 2025-07-DD
-- Core MVP
+### [0.1.0] Core MVP - 2025-08-09
+
+- [x] Display list of packages.
+- [x] Install/update selected package.
+- [x] Update all packages.
+- [x] Uninstall selected package.
+- [x] Filter list of packages.
+- [x] Status messages.
+- [x] Log debug info to a file.
+- [x] Show list of all keybindings.
+- [x] ~~Capture error when xbps itself needs an update.~~ Update `xbps` on startup.
 
 ## Roadmap
 
@@ -18,21 +27,11 @@ Planned and in-progress work for upcoming versions of `lazypm`.
 
 ### In Progress
 
-- [ ] 0.1.0 Core MVP
-    - [x] Display packages
-    - [x] Status messages
-    - [x] Log debug info to a file.
-    - [x] Install/update selected package
-    - [x] Update all packages
-    - [x] Uninstall selected package
-    - [x] Filter packages
-    - [x] Show list of all keybindings
-    - [ ] Capture error when xbps itself needs an update.
+- [ ] Modal to capture user password to run xbps-install and xbps-remove
+  - For now, just run `sudo lazypm`
 
 ### Planned
 
-- [ ] Modal to capture user password to run xbps-install and xbps-remove
-  - For now, just run `sudo lazypm`
 - [ ] Keybinding to list depedencies of a package
   - also show what packages depend on this package?
 
