@@ -1,0 +1,27 @@
+name: Build LazyPM
+
+on:
+    pull_request:
+        branches: [ main ]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        container:
+            image: voidlinux/voidlinux:latest
+        
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          
+        - name: Install build dependencies
+          run: |
+              xbps-install -Syu xbps
+              xbps-install -y gcc base-devel
+              
+        - name: Build nob
+          run: gcc ./build/nob.c -o ./build/nob
+          
+        - name: Build project
+          run: ./build/nob
+
