@@ -8,6 +8,8 @@ package system on Void Linux. Inspired by [lazygit](https://github.com/jesseduff
 it provides a keyboard-driven interface for managing packages without needing to
 memorize flags or commands.
 
+this is a test
+
 ## Table of Contents
 - [Quick Start](#quick-start)
 - [Features](#features)
