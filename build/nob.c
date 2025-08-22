@@ -10,16 +10,17 @@
 #define SRC_FOLDER "src/"
 
 #define BUILD_FAILED_MSG                                                                           \
-    nob_log(NOB_ERROR, "--- Build failed --------------------------------------");
+    nob_log(NOB_ERROR, "--- Build Failed --------------------------------------");
 
 int main(int argc, char **argv)
 {
     NOB_GO_REBUILD_URSELF(argc, argv);
 
-    nob_log(NOB_INFO, "--- Build started --------------------------------------");
+    nob_log(NOB_INFO, "--- Build Lazypm ---------------------------------------");
 
     Nob_Cmd cmd = {0};
     bool install_lazypm = false;
+    bool run_lazypm = false;
 
     while (argc > 1)
     {
@@ -27,6 +28,10 @@ int main(int argc, char **argv)
         if (strcmp(flag, "--install") == 0 || strcmp(flag, "-i") == 0)
         {
             install_lazypm = true;
+        }
+        else if (strcmp(flag, "--run") == 0 || strcmp(flag, "-r") == 0)
+        {
+            run_lazypm = true;
         }
         else
         {
@@ -69,19 +74,36 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    // move build/lazypm to /usr/local/bin if user passes in --install flag
+    nob_log(NOB_INFO, "--- Build Succeeded ------------------------------------");
+    
+    // reaching here, the actual build of lazypm has succeeded, but user may have passed
+    // in extra flags to automate running other processes.
+
+    // copy lazypm executable to /usr/local/bin
     if (install_lazypm)
     {
+        nob_log(NOB_INFO, "--- Install Lazypm -------------------------------------");
         char *install_path = "/usr/local/bin";
-        char *rmbrl_exe = BUILD_FOLDER "lazypm";
-        nob_cmd_append(&cmd, "sudo", "cp", rmbrl_exe, install_path);
+        nob_cmd_append(&cmd, "sudo", "cp", BUILD_FOLDER "lazypm", install_path);
         if (!nob_cmd_run_sync_and_reset(&cmd))
         {
-            BUILD_FAILED_MSG
+            nob_log(NOB_ERROR, "Failed to copy lazypm executable to \"%s\"", install_path);
             return 1;
         }
+        nob_log(NOB_INFO, "--- Install Succeeded ----------------------------------");
     }
 
-    nob_log(NOB_INFO, "--- Build succeeded ------------------------------------");
+    if (run_lazypm)
+    {
+        nob_log(NOB_INFO, "--- Run Lazypm -----------------------------------------");
+        nob_cmd_append(&cmd,"sudo", BUILD_FOLDER "lazypm");
+        if (!nob_cmd_run_sync_and_reset(&cmd))
+        {
+            nob_log(NOB_ERROR, "Failed to run lazypm");
+            return 1;
+        }
+        nob_log(NOB_INFO, "--- End Lazypm -----------------------------------------");
+    }
+
     return 0;
 }
