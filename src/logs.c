@@ -34,7 +34,7 @@ void lpm_log_dump_session(void)
         char *path = lpm_log_file_path();
         fprintf(stderr, "%s Full log: %s\n", lpm_log_level_str(LPM_LOG_LEVEL_INFO), path);
         LPM_FREE(path);
-        fprintf(stderr, "%s --- End Lazypm -----------------------------------------\n",
+        fprintf(stderr, "%s --- End Logs -------------------------------------------\n",
                 lpm_log_level_str(LPM_LOG_LEVEL_INFO));
     }
 }
